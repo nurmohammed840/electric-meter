@@ -20,10 +20,7 @@ class CenterWidget extends StatelessWidget {
         children: [
           Icon(iconData, color: Colors.grey, size: 48),
           const SizedBox(height: 16),
-          Text(
-            header,
-            style: const TextStyle(fontSize: 18, fontWeight: .bold),
-          ),
+          Text(header, style: const TextStyle(fontSize: 18, fontWeight: .bold)),
           const SizedBox(height: 8),
           Text(
             msg,

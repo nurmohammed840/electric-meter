@@ -32,5 +32,6 @@ class Month {
   factory Month.now() => Month.from(DateTime.now());
 
   @override
-  String toString() => "${year.toString().padLeft(4, '0')}-${month.toString().padLeft(2, '0')}}";
+  String toString() =>
+      "${year.toString().padLeft(4, '0')}-${month.toString().padLeft(2, '0')}}";
 }

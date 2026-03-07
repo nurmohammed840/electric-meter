@@ -94,8 +94,7 @@ class MyApp extends StatelessWidget {
             selectedIndex: selectedNav.value,
             onDestinationSelected: (idx) => selectedNav.set(idx),
             destinations: const [
-              NavigationDestination(
-                icon: Icon(Icons.speed), label: 'Usage'),
+              NavigationDestination(icon: Icon(Icons.speed), label: 'Usage'),
               NavigationDestination(
                 icon: Icon(Icons.timeline),
                 label: 'Consumption',
