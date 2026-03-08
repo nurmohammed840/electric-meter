@@ -19,7 +19,7 @@ void main() {
   HttpOverrides.global = MyHttpOverrides();
   AppInstance.init();
   runApp(const MyApp());
-} 
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -97,7 +97,7 @@ class MyApp extends StatelessWidget {
               NavigationDestination(icon: Icon(Icons.speed), label: 'Usage'),
               NavigationDestination(
                 icon: Icon(Icons.timeline),
-                label: 'Consumption',
+                label: 'Daily Consumption',
               ),
             ],
           ),

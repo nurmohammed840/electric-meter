@@ -8,7 +8,7 @@ class ConsumptionScreen extends AppScreen {
   const ConsumptionScreen({super.key});
 
   @override
-  final title = "Consumption";
+  final title = "Daily Consumption";
 
   @override
   Widget build(BuildContext context) {
