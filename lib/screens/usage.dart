@@ -1,9 +1,9 @@
-import 'package:desco_usage/api/customer.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'utils.dart';
 
 import '/app_state.dart';
+import '/pages/details.dart';
 import '/components/balance_pie_chart.dart';
 import '/components/center_widget.dart';
 
@@ -25,11 +25,7 @@ class UsageScreen extends AppScreen {
       }
 
       if (meterInfos.value.length == 1) {
-        final meter = meterInfos.value[0].balance;
-        final color = meterInfos.value[0].color;
-        return ListView(
-          children: [MeterList(meter: meter, color: color)],
-        );
+        return ListView(children: [MeterList(meter: meterInfos.value[0])]);
       }
 
       return ListView.separated(
@@ -45,10 +41,8 @@ class UsageScreen extends AppScreen {
             return BalancePieChart(meters: meterInfos.value);
           }
           index -= 1;
-          final meter = meterInfos.value[index].balance;
-          final color = meterInfos.value[index].color;
 
-          return MeterList(meter: meter, color: color);
+          return MeterList(meter: meterInfos.value[index]);
         },
       );
     });
@@ -56,36 +50,43 @@ class UsageScreen extends AppScreen {
 }
 
 class MeterList extends StatelessWidget {
-  const MeterList({super.key, required this.meter, required this.color});
+  const MeterList({super.key, required this.meter});
 
-  final Balance meter;
-  final Color color;
+  final MeterInfo meter;
 
   @override
   Widget build(BuildContext context) {
+    final balance = meter.balance;
+    final color = meter.color;
     return ListTile(
       leading: const Icon(Icons.electric_meter),
       title: Text(
-        meter.accountNo,
+        balance.accountNo,
         style: const TextStyle(
           fontWeight: FontWeight.w500, // make title bold
         ),
       ),
-      // subtitle: Text(balance.meterNo),
       subtitle: Column(
         crossAxisAlignment: .start,
         children: [
-          Text("# ${meter.meterNo}"),
-          Text("${meter.currentMonthConsumption.toStringAsFixed(2)} kWh"),
-          Text(DateFormat('MMMM d').format(meter.readingTime.time())),
+          Text("# ${balance.meterNo}"),
+          Text("${balance.currentMonthConsumption.toStringAsFixed(2)} kWh"),
+          Text(DateFormat('MMMM d').format(balance.readingTime.time())),
         ],
       ),
       trailing: Text(
-        meter.balance.toStringAsFixed(2), // show balance on the right
+        balance.balance.toStringAsFixed(2), // show balance on the right
         style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
       ),
       iconColor: color,
-      onTap: () => {},
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => MeterDetailsPage(meter: meter),
+          ),
+        );
+      },
     );
   }
 }

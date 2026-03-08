@@ -39,36 +39,37 @@ class Response<T> {
 }
 
 class Info {
-  String accountNo;
-  String contactNo;
-  String customerName;
-  String feederName;
-  String installationAddress;
-  Date installationDate;
-  String meterNo;
-  String phaseType;
+  String? meterNo;
+  String? customerName;
+  String? tariffSolution;
+
+  String? accountNo;
+  String? contactNo;
+  String? feederName;
+  String? installationAddress;
+  Date? installationDate;
+  String? phaseType;
   dynamic registerDate;
-  int sanctionLoad;
-  String tariffSolution;
-  String meterModel;
-  String transformer;
-  String sdName;
+  int? sanctionLoad;
+  String? meterModel;
+  String? transformer;
+  String? sdName;
 
   Info({
-    required this.accountNo,
-    required this.contactNo,
-    required this.customerName,
-    required this.feederName,
-    required this.installationAddress,
-    required this.installationDate,
-    required this.meterNo,
-    required this.phaseType,
-    required this.registerDate,
-    required this.sanctionLoad,
-    required this.tariffSolution,
-    required this.meterModel,
-    required this.transformer,
-    required this.sdName,
+    this.accountNo,
+    this.contactNo,
+    this.customerName,
+    this.feederName,
+    this.installationAddress,
+    this.installationDate,
+    this.meterNo,
+    this.phaseType,
+    this.registerDate,
+    this.sanctionLoad,
+    this.tariffSolution,
+    this.meterModel,
+    this.transformer,
+    this.sdName,
   });
 
   factory Info.fromJson(Map<String, dynamic> json) => Info(
