@@ -1,4 +1,4 @@
-import 'package:desco_usage/components/app_bar.dart';
+import 'package:desco_usage/widgets/app_bar.dart';
 import 'package:flutter/material.dart';
 
 import '/app_state.dart';
@@ -7,7 +7,7 @@ class ConsumptionScreen extends StatelessWidget {
   const ConsumptionScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext _) {
     print("------------------");
     return Scaffold(
       appBar: appBar("Daily Consumption"),

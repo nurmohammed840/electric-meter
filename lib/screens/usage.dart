@@ -1,4 +1,4 @@
-import 'package:desco_usage/components/app_bar.dart';
+import 'package:desco_usage/widgets/app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -11,7 +11,7 @@ class UsageScreen extends StatelessWidget {
   const UsageScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext _) {
     return Scaffold(
       appBar: appBar("Usage"),
       body: meterInfos.watch((_) {
@@ -39,9 +39,7 @@ class UsageScreen extends StatelessWidget {
             if (index == 0) {
               return BalancePieChart(meters: meterInfos.value);
             }
-            index -= 1;
-
-            return MeterList(meter: meterInfos.value[index]);
+            return MeterList(meter: meterInfos.value[index - 1]);
           },
         );
       }),
