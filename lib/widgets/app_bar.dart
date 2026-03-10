@@ -37,7 +37,8 @@ AppBar appBar(String title) => AppBar(
             if (meterNo == null) {
               return;
             }
-            addMeter(meterNo);
+            if (!context.mounted) return;
+            addMeter(meterNo, context);
           },
         ),
         PopupMenuItem(

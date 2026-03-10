@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'date.dart';
 
 const prettyPrint = JsonEncoder.withIndent("  ");
@@ -9,7 +10,7 @@ Response<T> Function(Map<String, dynamic>) parseResponse<T>(
   return (json) => Response(
     code: json['code'],
     desc: json['desc'],
-    data: fromJsonT(json['data']),
+    data: json['data'] == null ? null : fromJsonT(json['data']),
   );
 }
 
@@ -19,19 +20,32 @@ Response<List<T>> Function(Map<String, dynamic>) parseResponseMany<T>(
   return (json) => Response(
     code: json['code'],
     desc: json['desc'],
-    data: List.from(json["data"].map((v) => fromJsonT(v))),
+    data: json['data'] == null
+        ? null
+        : List.from(json["data"].map((v) => fromJsonT(v))),
   );
 }
 
 class Response<T> {
   final int code;
   final String desc;
-  final T data;
+  final T? data;
 
-  Response({required this.code, required this.desc, required this.data});
+  Response({required this.code, required this.desc, this.data});
 
   Map<String, dynamic> toJson(Object Function(T value) toJsonT) {
-    return {'code': code, 'desc': desc, 'data': toJsonT(data)};
+    return {
+      'code': code,
+      'desc': desc,
+      'data': data == null ? null : toJsonT(data as T),
+    };
+  }
+
+  String? errorMessage() {
+    if (data == null) {
+      return desc;
+    }
+    return null;
   }
 
   @override

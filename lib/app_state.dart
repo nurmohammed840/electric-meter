@@ -1,3 +1,4 @@
+import 'package:desco_usage/components/error_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -25,6 +26,8 @@ class MeterInfo {
   Color color;
 
   MeterInfo({required this.balance, required this.color});
+
+  MeterNo meterNo() => MeterNo.fromMeterNo(balance.meterNo);
 }
 
 final selectedNav = CreateState(0);
@@ -34,23 +37,42 @@ CreateState<List<MeterInfo>> meterInfos = CreateState([]);
 
 CreateState<Future<List<int>>> dailyConsumtions = CreateState(Future.value([]));
 
-void addMeter(MeterNo meterNo) async {
+Future<void> loadDailyConsumtions(Duration duration) async {
+  // final today = Date.now();
+  // final to = Date.from(today.time().subtract(duration));
+
+  // final a = await Future.wait(
+  //   meterInfos.value.map((info) async {
+  //     final response = await getDailyConsumptions(info.meterNo(), today, to);
+  //   }),
+  // );
+}
+
+void addMeter(MeterNo meterNo, BuildContext context) async {
   final balance = await _loadData(() => getBalance(meterNo));
 
   if (balance == null) {
+    return; // unknown error
+  }
+
+  if (!context.mounted) {
     return;
   }
 
-  // cheak if meter already added
+  if (balance.data == null) {
+    return showSnackBar(context, const Text("Meter or account does not exist"));
+  }
+
+  // don't add meter if meter already added.
   if (meterInfos.value.any(
-    (meter) => meter.balance.meterNo == balance.data.meterNo,
+    (meter) => meter.balance.meterNo == balance.data!.meterNo,
   )) {
-    return;
+    return showSnackBar(context, const Text("Meter already added"));
   }
 
   meterInfos.update((list) {
     meterInfos.value.add(
-      MeterInfo(balance: balance.data, color: pickNextColor()),
+      MeterInfo(balance: balance.data!, color: pickNextColor()),
     );
   });
 

@@ -6,12 +6,14 @@ import '/app_state.dart';
 
 final _once = OnceInit();
 
+
+
 class ConsumptionScreen extends StatelessWidget {
   const ConsumptionScreen({super.key});
 
   static void loadData() {
     _once.callAsync(() async {
-      print("===========================");
+      
     });
   }
 
