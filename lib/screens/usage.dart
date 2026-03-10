@@ -1,3 +1,4 @@
+import 'package:desco_usage/components/optional.dart';
 import 'package:desco_usage/widgets/app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -29,12 +30,13 @@ class UsageScreen extends StatelessWidget {
 
         return ListView.separated(
           itemCount: meterInfos.value.length + 1,
-          separatorBuilder: (_, index) => index == 0
-              ? const SizedBox.shrink()
-              : const Padding(
-                  padding: .symmetric(horizontal: 16.0),
-                  child: Divider(color: Colors.grey, thickness: 0.5),
-                ),
+          separatorBuilder: (_, index) => Optional(
+            condition: index > 0,
+            child: const Padding(
+              padding: .symmetric(horizontal: 16.0),
+              child: Divider(color: Colors.grey, thickness: 0.5),
+            ),
+          ),
           itemBuilder: (_, index) {
             if (index == 0) {
               return BalancePieChart(meters: meterInfos.value);
@@ -55,13 +57,12 @@ class MeterList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final balance = meter.balance;
-    final color = meter.color;
     return ListTile(
       leading: const Icon(Icons.electric_meter),
       title: Text(
         balance.accountNo,
         style: const TextStyle(
-          fontWeight: FontWeight.w500, // make title bold
+          fontWeight: .w500, // make title bold
         ),
       ),
       subtitle: Column(
@@ -74,9 +75,9 @@ class MeterList extends StatelessWidget {
       ),
       trailing: Text(
         balance.balance.toStringAsFixed(2), // show balance on the right
-        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
+        style: const TextStyle(fontWeight: .bold, fontSize: 22),
       ),
-      iconColor: color,
+      iconColor: meter.color,
       onTap: () {
         Navigator.push(
           context,

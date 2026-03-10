@@ -15,9 +15,9 @@ class SettingsPage extends StatelessWidget {
               title: const Text("Dark Mode"),
               subtitle: const Text("Use dark theme"),
               secondary: const Icon(Icons.dark_mode),
-              value: appSettings.theme.value == ThemeMode.dark,
+              value: appSettings.theme.value == .dark,
               onChanged: (value) {
-                appSettings.theme.set(value ? ThemeMode.dark : ThemeMode.light);
+                appSettings.theme.set(value ? .dark : .light);
               },
             ),
           ),

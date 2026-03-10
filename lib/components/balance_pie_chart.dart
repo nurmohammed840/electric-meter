@@ -16,7 +16,6 @@ class BalancePieChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // sum all balances
     final double totalBalance = meters.fold(
       0,
       (sum, meter) => sum + meter.balance.balance,
@@ -39,7 +38,7 @@ class BalancePieChart extends StatelessWidget {
                   radius: 50,
                   titleStyle: const TextStyle(
                     fontSize: 12,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: .bold,
                     color: Colors.white,
                   ),
                 );
@@ -57,14 +56,11 @@ class BalancePieChart extends StatelessWidget {
               children: [
                 const TextSpan(
                   text: "Total Balance: ", // normal text
-                  style: TextStyle(fontWeight: FontWeight.normal, fontSize: 18),
+                  style: TextStyle(fontWeight: .normal, fontSize: 18),
                 ),
                 TextSpan(
                   text: totalBalance.toStringAsFixed(2), // bold balance
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
+                  style: const TextStyle(fontWeight: .bold, fontSize: 18),
                 ),
               ],
             ),
