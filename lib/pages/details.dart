@@ -18,7 +18,7 @@ class MeterDetailsPage extends StatelessWidget {
           IconButton(
             icon: const Padding(
               padding: .symmetric(horizontal: 10),
-              child: Icon(Icons.delete, color: Color(0xFF616161)),
+              child: Icon(Icons.delete, color: Colors.grey),
             ),
             tooltip: "Remove Meter",
             onPressed: () {

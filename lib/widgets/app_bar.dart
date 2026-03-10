@@ -1,3 +1,4 @@
+import 'package:desco_usage/pages/settings.dart';
 import 'package:flutter/material.dart';
 
 import '/app_state.dart';
@@ -27,6 +28,10 @@ AppBar appBar(String title) => AppBar(
       onSelected: (value) {},
       itemBuilder: (context) => [
         PopupMenuItem(
+          value: 'add_meter',
+          child: const Row(
+            children: [Icon(Icons.add), SizedBox(width: 8), Text('Add Meter')],
+          ),
           onTap: () async {
             final meterNo = await acceptMeterNo(context);
             if (meterNo == null) {
@@ -34,10 +39,6 @@ AppBar appBar(String title) => AppBar(
             }
             addMeter(meterNo);
           },
-          value: 'add_meter',
-          child: const Row(
-            children: [Icon(Icons.add), SizedBox(width: 8), Text('Add Meter')],
-          ),
         ),
         PopupMenuItem(
           value: 'settings',
@@ -48,6 +49,12 @@ AppBar appBar(String title) => AppBar(
               Text('Settings'),
             ],
           ),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const SettingsPage()),
+            );
+          },
         ),
       ],
     ),

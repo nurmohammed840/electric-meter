@@ -73,6 +73,12 @@ void _saveMeters() {
   });
 }
 
+class AppSettings {
+  final theme = CreateState(ThemeMode.light);
+}
+
+final appSettings = AppSettings();
+
 class AppInstance {
   SharedPreferences sharedPreferences;
   AppInstance({required this.sharedPreferences});

@@ -1,10 +1,9 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 
 import 'app_state.dart';
 import 'screens/usage.dart';
 import 'screens/consumption.dart';
-
-import 'dart:io';
 
 class MyHttpOverrides extends HttpOverrides {
   @override
@@ -25,33 +24,47 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   static const screens = [UsageScreen(), ConsumptionScreen()];
+  static const destinations = [
+    NavigationDestination(icon: Icon(Icons.speed), label: 'Usage'),
+    NavigationDestination(
+      icon: Icon(Icons.timeline),
+      label: 'Daily Consumption',
+    ),
+  ];
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Desco Usage',
-      debugShowCheckedModeBanner: false,
-      home: selectedNav.watch((_) {
-        if (selectedNav.value == 1) {
-          ConsumptionScreen.loadData();
-        }
-
-        return Scaffold(
-          body: IndexedStack(index: selectedNav.value, children: MyApp.screens),
-          bottomNavigationBar: NavigationBar(
-            labelBehavior: .alwaysHide,
-            selectedIndex: selectedNav.value,
-            onDestinationSelected: (idx) => selectedNav.set(idx),
-            destinations: const [
-              NavigationDestination(icon: Icon(Icons.speed), label: 'Usage'),
-              NavigationDestination(
-                icon: Icon(Icons.timeline),
-                label: 'Daily Consumption',
-              ),
-            ],
-          ),
-        );
-      }),
+    return appSettings.theme.watch(
+      (_) => MaterialApp(
+        themeMode: appSettings.theme.value,
+        theme: ThemeData.light(),
+        darkTheme: ThemeData.dark(),
+        title: 'Desco Usage',
+        debugShowCheckedModeBanner: false,
+        home: const HomeWidget(),
+      ),
     );
+  }
+}
+
+class HomeWidget extends StatelessWidget {
+  const HomeWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return selectedNav.watch((_) {
+      if (selectedNav.value == 1) {
+        ConsumptionScreen.loadData();
+      }
+      return Scaffold(
+        body: IndexedStack(index: selectedNav.value, children: MyApp.screens),
+        bottomNavigationBar: NavigationBar(
+          labelBehavior: .alwaysHide,
+          selectedIndex: selectedNav.value,
+          onDestinationSelected: (idx) => selectedNav.set(idx),
+          destinations: MyApp.destinations,
+        ),
+      );
+    });
   }
 }
