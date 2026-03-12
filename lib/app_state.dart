@@ -122,7 +122,7 @@ void addMeter(MeterNo meterNo, BuildContext context) async {
 
   meterInfos.update((list) {
     meterInfos.value.add(
-      MeterInfo(balance: balance.data!, color: pickNextColor()),
+      MeterInfo(balance: balance.data!, color: colorPicker.next()),
     );
   });
 
@@ -175,7 +175,7 @@ class AppInstance {
       final data = balances
           .map((res) => res?.data)
           .whereType<Balance>()
-          .map((balance) => MeterInfo(balance: balance, color: pickNextColor()))
+          .map((b) => MeterInfo(balance: b, color: colorPicker.next()))
           .toList();
 
       meterInfos.set(data);

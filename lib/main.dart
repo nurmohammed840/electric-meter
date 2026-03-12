@@ -54,7 +54,7 @@ class HomeWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return selectedNav.watch((_) {
       if (selectedNav.value == 1) {
-        RechargeHistoryScreen.loadData();
+        RechargeHistoryScreen.onFocus();
       }
       return Scaffold(
         body: IndexedStack(index: selectedNav.value, children: screens),

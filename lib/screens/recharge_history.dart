@@ -10,9 +10,10 @@ final _once = OnceInit();
 class RechargeHistoryScreen extends StatelessWidget {
   const RechargeHistoryScreen({super.key});
 
-  static void loadData() {
-    loadRechargeHistorys(Duration(days: 90));
-    _once.callAsync(() async {});
+  static void onFocus() {
+    _once.callAsync(() async {
+      loadRechargeHistorys(Duration(days: 90));
+    });
   }
 
   @override

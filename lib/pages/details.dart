@@ -1,4 +1,5 @@
 import 'package:desco_usage/app_state.dart';
+import 'package:desco_usage/colors.dart';
 import 'package:desco_usage/widgets/table_data.dart';
 import 'package:flutter/material.dart';
 
@@ -23,6 +24,7 @@ class MeterDetailsPage extends StatelessWidget {
             tooltip: "Remove Meter",
             onPressed: () {
               removeMeter(meter);
+              colorPicker.add(meter.color);
               Navigator.pop(context);
             },
           ),
