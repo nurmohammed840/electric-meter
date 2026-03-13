@@ -2,11 +2,16 @@
     "dart.previewFlutterUiGuides": true,
     "dart.previewFlutterUiGuidesCustomTracking": true,
     "files.exclude": {
+        "**/analysis_options.yaml": true,
+        "**/.gitignore": true,
+        // -------------
         "**/.dart_tool": true,
         "**/.idea": true,
         "**/.metadata": true,
-        "**/pubspec.lock": true,
         "**/.flutter-plugins-dependencies": true,
+        "**/pubspec.lock": true,
+        "**/desco_usage.iml": true,
+        // -------------
         "**/build": true,
         "**/android": true,
         "**/ios": true,
