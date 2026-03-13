@@ -23,9 +23,12 @@ class RechargeHistoryPage extends StatelessWidget {
               tableRow("Account No", h.accountNo),
               tableRow("Meter No", h.meterNo),
               tableRow("Recharge Date", meterRechargeHistory.formattedDate),
-              tableRow("Total Amount", "৳ ${h.totalAmount}"),
-              tableRow("Energy Amount", "৳ ${h.energyAmount}"),
+              tableRow(
+                "Total Amount",
+                "৳ ${meterRechargeHistory.formattedBalance}",
+              ),
               tableRow("Charge Amount", "৳ ${h.chargeAmount}"),
+              tableRow("Energy Amount", "৳ ${h.energyAmount}"),
             ],
           ),
           const TableHeader(header: "Charges"),
@@ -41,8 +44,8 @@ class RechargeHistoryPage extends StatelessWidget {
             children: [
               tableRow("Sequence", h.sequence),
               tableRow("Status", h.orderStatus),
-              tableRow("Token", h.token),
-              tableRow("Order ID", h.orderId),
+              tableRow("Token", _formatToken(h.token, 4)),
+              tableRow("Order ID", _removeLeadingZeros(h.orderId)),
               tableRow("Recharge Operator", h.rechargeOperator),
             ],
           ),
@@ -69,4 +72,19 @@ class TableHeader extends StatelessWidget {
       ),
     );
   }
+}
+
+String _removeLeadingZeros(String s) => s.replaceFirst(RegExp(r'^0+'), '');
+
+String _formatToken(String input, int sp) {
+  final buffer = StringBuffer();
+
+  for (int i = 0; i < input.length; i++) {
+    if (i > 0 && i % sp == 0) {
+      buffer.write('  ');
+    }
+    buffer.write(input[i]);
+  }
+
+  return buffer.toString();
 }

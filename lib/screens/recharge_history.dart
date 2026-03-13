@@ -11,8 +11,8 @@ class RechargeHistoryScreen extends StatelessWidget {
   const RechargeHistoryScreen({super.key});
 
   static void onFocus() {
-    _once.callAsync(() async {
       loadRechargeHistorys(Duration(days: 90));
+    _once.callAsync(() async {
     });
   }
 
@@ -71,14 +71,14 @@ class RechargeHistoryTile extends StatelessWidget {
         ],
       ),
       trailing: Text(
-        history.totalAmount.toStringAsFixed(2), // show balance on the right
+        "৳ ${meterRechargeHistory.formattedBalance}", // show balance on the right
         style: const TextStyle(fontWeight: .bold, fontSize: 22),
       ),
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) =>
+            builder: (_) =>
                 RechargeHistoryPage(meterRechargeHistory: meterRechargeHistory),
           ),
         );

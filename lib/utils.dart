@@ -13,3 +13,4 @@ class OnceInit {
     return await fn();
   }
 }
+

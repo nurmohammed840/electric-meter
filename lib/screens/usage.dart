@@ -69,12 +69,12 @@ class MeterList extends StatelessWidget {
         crossAxisAlignment: .start,
         children: [
           Text("# ${balance.meterNo}"),
-          Text("${balance.currentMonthConsumption.toStringAsFixed(2)} kWh"),
+          Text("${balance.currentMonthConsumption} kWh"),
           Text(meter.formattedDate),
         ],
       ),
       trailing: Text(
-        balance.balance.toStringAsFixed(2), // show balance on the right
+        balance.balance.toString(), // show balance on the right
         style: const TextStyle(fontWeight: .bold, fontSize: 22),
       ),
       onTap: () {

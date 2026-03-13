@@ -36,10 +36,10 @@ class MeterDetailsPage extends StatelessWidget {
             children: [
               tableRow("Account No", balance.accountNo),
               tableRow("Meter No", balance.meterNo),
-              tableRow("Balance", "৳ ${balance.balance.toStringAsFixed(2)}"),
+              tableRow("Balance", "৳ ${balance.balance}"),
               tableRow(
                 "Month Consumption",
-                "${balance.currentMonthConsumption.toStringAsFixed(2)} kWh",
+                "${balance.currentMonthConsumption} kWh",
               ),
               tableRow("Reading Time", meter.formattedDate),
             ],

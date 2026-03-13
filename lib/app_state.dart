@@ -23,20 +23,24 @@ Future<T?> _loadData<T>(Future<T> Function() cb) async {
   return null;
 }
 
+final dateFormatter = DateFormat('d MMM yyyy, h:mm a');
+final dateFormatterAlt = DateFormat('MMMM d');
+final balanceFormatter = NumberFormat('#,##0.##');
+
 class MeterRechargeHistory {
   MeterRechargeHistory({required this.info, required this.history})
-    : formattedDate = DateFormat(
-        'd MMM yyyy, h:mm a',
-      ).format(history.rechargeDate);
+    : formattedDate = dateFormatter.format(history.rechargeDate),
+      formattedBalance = balanceFormatter.format(history.totalAmount);
 
   final MeterInfo info;
   final RechargeHistory history;
   final String formattedDate;
+  final String formattedBalance;
 }
 
 class MeterInfo {
   MeterInfo({required this.balance, required this.color})
-    : formattedDate = DateFormat('MMMM d').format(balance.readingTime.time());
+    : formattedDate = dateFormatterAlt.format(balance.readingTime.time());
 
   final Balance balance;
   final Color color;

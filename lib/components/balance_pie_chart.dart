@@ -55,11 +55,11 @@ class BalancePieChart extends StatelessWidget {
             TextSpan(
               children: [
                 const TextSpan(
-                  text: "Total Balance: ", // normal text
+                  text: "Total Balance: ",
                   style: TextStyle(fontWeight: .normal, fontSize: 18),
                 ),
                 TextSpan(
-                  text: totalBalance.toStringAsFixed(2), // bold balance
+                  text: totalBalance.toStringAsFixed(2),
                   style: const TextStyle(fontWeight: .bold, fontSize: 18),
                 ),
               ],
