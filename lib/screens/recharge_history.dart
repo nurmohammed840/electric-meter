@@ -1,4 +1,4 @@
-import 'package:desco_usage/pages/recharge_history.dart';
+import 'package:desco_usage/pages/recharge_receipt.dart';
 import 'package:desco_usage/utils.dart';
 import 'package:desco_usage/widgets/app_bar.dart';
 import 'package:flutter/material.dart';
@@ -47,7 +47,7 @@ class RechargeHistoryScreen extends StatelessWidget {
 class RechargeHistoryTile extends StatelessWidget {
   const RechargeHistoryTile({super.key, required this.meterRechargeHistory});
 
-  final MeterRechargeHistory meterRechargeHistory;
+  final MeterRechargeReceipt meterRechargeHistory;
 
   @override
   Widget build(BuildContext context) {
@@ -79,7 +79,7 @@ class RechargeHistoryTile extends StatelessWidget {
           context,
           MaterialPageRoute(
             builder: (_) =>
-                RechargeHistoryPage(meterRechargeHistory: meterRechargeHistory),
+                RechargeReceiptPage(meterRechargeReceipt: meterRechargeHistory),
           ),
         );
         // open details pagelater

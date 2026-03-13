@@ -26,3 +26,18 @@ TableRow tableRow(String title, String value) {
     ],
   );
 }
+
+TableRow? optionalTableRow(String title, String? value) {
+  if (value == null) return null;
+  if (value.trim().isEmpty) return null;
+
+  return TableRow(
+    children: [
+      Padding(
+        padding: const .all(8),
+        child: Text(title, style: const TextStyle(fontWeight: .bold)),
+      ),
+      Padding(padding: const .all(8), child: Text(value)),
+    ],
+  );
+}

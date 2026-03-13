@@ -30,7 +30,7 @@ class MeterDetailsPage extends StatelessWidget {
           ),
         ],
       ),
-      body: Column(
+      body: ListView(
         children: [
           DataTableWidget(
             children: [
@@ -43,6 +43,37 @@ class MeterDetailsPage extends StatelessWidget {
               ),
               tableRow("Reading Time", meter.formattedDate),
             ],
+          ),
+          const Text("Acc Info"),
+          FutureBuilder(
+            future: meter.info,
+            builder: (_, snapshot) {
+              if (snapshot.connectionState == .waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              final data = snapshot.data!;
+              return DataTableWidget(
+                children: [
+                  ?optionalTableRow("Name", data.customerName),
+                  ?optionalTableRow("Contact", data.contactNo),
+                  ?optionalTableRow("Load", data.sanctionLoad?.toString()),
+                  ?optionalTableRow("Feeder", data.feederName),
+                  ?optionalTableRow(
+                    "Installation Address",
+                    data.installationAddress,
+                  ),
+                  ?optionalTableRow("S & D", data.sdName),
+                  ?optionalTableRow(
+                    "Installation Date",
+                    data.installationDate?.format(),
+                  ),
+                  ?optionalTableRow("Meter Model", data.meterModel),
+                  ?optionalTableRow("Phase Type", data.phaseType),
+                  ?optionalTableRow("Tariff", data.tariffSolution),
+                  ?optionalTableRow("Transformer", data.transformer),
+                ],
+              );
+            },
           ),
         ],
       ),

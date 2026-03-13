@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:desco_usage/types.dart';
+
 import 'date.dart';
 
 const prettyPrint = JsonEncoder.withIndent("  ");
@@ -52,7 +54,7 @@ class Response<T> {
   String toString() => 'Response(code: $code, desc: $desc, data: $data)';
 }
 
-class Info {
+class Info extends JsonSerializable {
   Info({
     this.accountNo,
     this.contactNo,
@@ -103,6 +105,7 @@ class Info {
   String? transformer;
   String? sdName;
 
+  @override
   Map<String, dynamic> toJson() => {
     "accountNo": accountNo,
     "contactNo": contactNo,
@@ -119,11 +122,6 @@ class Info {
     "transformer": transformer,
     "SDName": sdName,
   };
-
-  @override
-  String toString() {
-    return prettyPrint.convert(toJson());
-  }
 }
 
 class DailyConsumption {
@@ -294,8 +292,8 @@ class Balance {
   }
 }
 
-class RechargeHistory {
-  RechargeHistory({
+class RechargeReceipt {
+  RechargeReceipt({
     required this.accountNo,
     required this.meterNo,
     required this.orderId,
@@ -312,8 +310,8 @@ class RechargeHistory {
     required this.vat,
   });
 
-  factory RechargeHistory.fromJson(Map<String, dynamic> json) =>
-      RechargeHistory(
+  factory RechargeReceipt.fromJson(Map<String, dynamic> json) =>
+      RechargeReceipt(
         accountNo: json["accountNo"],
         meterNo: json["meterNo"],
         orderId: _removeLeadingZeros(json["orderID"]),

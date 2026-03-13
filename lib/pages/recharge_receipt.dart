@@ -2,14 +2,14 @@ import 'package:desco_usage/app_state.dart';
 import 'package:desco_usage/widgets/table_data.dart';
 import 'package:flutter/material.dart';
 
-class RechargeHistoryPage extends StatelessWidget {
-  const RechargeHistoryPage({super.key, required this.meterRechargeHistory});
+class RechargeReceiptPage extends StatelessWidget {
+  const RechargeReceiptPage({super.key, required this.meterRechargeReceipt});
 
-  final MeterRechargeHistory meterRechargeHistory;
+  final MeterRechargeReceipt meterRechargeReceipt;
 
   @override
   Widget build(BuildContext context) {
-    final h = meterRechargeHistory.history;
+    final h = meterRechargeReceipt.history;
     final chargeItems = h.chargeItems
         .where((item) => item.chargeAmount > 0)
         .map((item) => tableRow(item.chargeItemName, "৳ ${item.chargeAmount}"));
@@ -22,10 +22,10 @@ class RechargeHistoryPage extends StatelessWidget {
             children: [
               tableRow("Account No", h.accountNo),
               tableRow("Meter No", h.meterNo),
-              tableRow("Recharge Date", meterRechargeHistory.formattedDate),
+              tableRow("Recharge Date", meterRechargeReceipt.formattedDate),
               tableRow(
                 "Total Amount",
-                "৳ ${meterRechargeHistory.formattedBalance}",
+                "৳ ${meterRechargeReceipt.formattedBalance}",
               ),
               tableRow("Charge Amount", "৳ ${h.chargeAmount}"),
               tableRow("Energy Amount", "৳ ${h.energyAmount}"),

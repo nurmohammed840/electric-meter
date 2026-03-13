@@ -1,3 +1,7 @@
+import 'package:intl/intl.dart';
+
+final _dateFormatter = DateFormat('d MMMM yyyy');
+
 class Date {
   Date({required this.year, required this.month, required this.day});
 
@@ -16,6 +20,10 @@ class Date {
   @override
   String toString() {
     return "${year.toString().padLeft(4, '0')}-${month.toString().padLeft(2, '0')}-${day.toString().padLeft(2, '0')}";
+  }
+
+  String format() {
+    return _dateFormatter.format(time());
   }
 }
 

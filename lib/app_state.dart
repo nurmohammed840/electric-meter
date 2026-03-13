@@ -1,3 +1,4 @@
+import 'package:desco_usage/cache.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -14,30 +15,38 @@ final dateFormatter = DateFormat('d MMM yyyy, h:mm a');
 final dateFormatterAlt = DateFormat('MMMM d');
 final balanceFormatter = NumberFormat('#,##0.##');
 
-class MeterRechargeHistory {
-  MeterRechargeHistory({required this.info, required this.history})
+class MeterRechargeReceipt {
+  MeterRechargeReceipt({required this.info, required this.history})
     : formattedDate = dateFormatter.format(history.rechargeDate),
       formattedBalance = balanceFormatter.format(history.totalAmount);
 
   final MeterInfo info;
-  final RechargeHistory history;
+  final RechargeReceipt history;
   final String formattedDate;
   final String formattedBalance;
 }
 
 class MeterInfo {
   MeterInfo({required this.balance, required this.color})
-    : formattedDate = dateFormatterAlt.format(balance.readingTime.time());
+    : formattedDate = dateFormatterAlt.format(balance.readingTime.time()),
+      cacheKey = CacheKey(meterNo: balance.meterNo);
 
-  final Balance balance;
   final Color color;
+  final Balance balance;
   final String formattedDate;
+  final CacheKey cacheKey;
 
   late final info = customerInfo();
 
-  Future<Info> customerInfo() async {
-    final res = await getCustomerInfo(meterNo());
-    return res.getData();
+  Future<Info> customerInfo() {
+    return CacheManager.getOrInit(
+      cacheKey.customarInfoCKey(),
+      Info.fromJson,
+      () async {
+        final res = await getCustomerInfo(meterNo());
+        return res.getData();
+      },
+    );
   }
 
   MeterNo meterNo() => MeterNo.fromMeterNo(balance.meterNo);
@@ -47,12 +56,12 @@ final selectedNav = CreateState(0);
 
 CreateState<List<MeterInfo>> meterInfos = CreateState([]);
 
-CreateState<Future<List<MeterRechargeHistory>>> rechargeHistorys = CreateState(
+CreateState<Future<List<MeterRechargeReceipt>>> rechargeHistorys = CreateState(
   Future.value([]),
 );
 
 void loadRechargeHistorys(Duration duration) async {
-  Future<List<MeterRechargeHistory>> load() async {
+  Future<List<MeterRechargeReceipt>> load() async {
     try {
       return await fetchRechargeHistorys(duration);
     } catch (e) {
@@ -63,7 +72,7 @@ void loadRechargeHistorys(Duration duration) async {
   rechargeHistorys.set(load());
 }
 
-Future<List<MeterRechargeHistory>> fetchRechargeHistorys(
+Future<List<MeterRechargeReceipt>> fetchRechargeHistorys(
   Duration duration,
 ) async {
   final today = Date.now();
@@ -77,7 +86,7 @@ Future<List<MeterRechargeHistory>> fetchRechargeHistorys(
 
         final result = list.data!
             .map(
-              (history) => MeterRechargeHistory(history: history, info: info),
+              (history) => MeterRechargeReceipt(history: history, info: info),
             )
             .toList();
 
@@ -90,7 +99,7 @@ Future<List<MeterRechargeHistory>> fetchRechargeHistorys(
   );
 
   return responses
-      .whereType<List<MeterRechargeHistory>>()
+      .whereType<List<MeterRechargeReceipt>>()
       .expand((e) => e)
       .toList();
 }

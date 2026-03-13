@@ -80,13 +80,13 @@ Future<Response<Balance>> getBalance(MeterNo meterInfo) async {
   return fetchJson(url, parseResponse(Balance.fromJson));
 }
 
-Future<Response<List<RechargeHistory>>> getRechargeHistorys(
+Future<Response<List<RechargeReceipt>>> getRechargeHistorys(
   MeterNo meterInfo,
   Date from,
   Date to,
 ) async {
   final url = "$apiUrl/getRechargeHistory?$meterInfo&dateFrom=$from&dateTo=$to";
-  return fetchJson(url, parseResponseMany(RechargeHistory.fromJson));
+  return fetchJson(url, parseResponseMany(RechargeReceipt.fromJson));
 }
 
 Future<Response<List<MonthlyConsumption>>> getMonthlyConsumption(
