@@ -331,8 +331,8 @@ class RechargeHistory {
       RechargeHistory(
         accountNo: json["accountNo"],
         meterNo: json["meterNo"],
-        orderId: json["orderID"],
-        token: json["token"],
+        orderId: _removeLeadingZeros(json["orderID"]),
+        token: _formatToken(json["token"], 4),
         sequence: json["sequence"],
         totalAmount: json["totalAmount"],
         energyAmount: json["energyAmount"]?.toDouble(),
@@ -390,4 +390,19 @@ class ChargeItem {
   String toString() {
     return prettyPrint.convert(toJson());
   }
+}
+
+String _removeLeadingZeros(String s) => s.replaceFirst(RegExp(r'^0+'), '');
+
+String _formatToken(String input, int sp) {
+  final buffer = StringBuffer();
+
+  for (int i = 0; i < input.length; i++) {
+    if (i > 0 && i % sp == 0) {
+      buffer.write('  ');
+    }
+    buffer.write(input[i]);
+  }
+
+  return buffer.toString();
 }

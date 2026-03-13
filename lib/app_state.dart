@@ -9,8 +9,6 @@ import '/api/customer.dart';
 import '/colors.dart';
 import '/signal.dart';
 
-late final Future<AppInstance> _appInstance;
-
 Future<T?> _loadData<T>(Future<T> Function() cb) async {
   isLoading.set(isLoading.value + 1);
   try {
@@ -141,12 +139,10 @@ void removeMeter(MeterInfo meter) {
 }
 
 void _saveMeters() {
-  AppInstance.get((app) {
-    app.sharedPreferences.setStringList(
-      "meters",
-      meterInfos.value.map((meter) => meter.balance.meterNo).toList(),
-    );
-  });
+  AppInstance.store.sharedPreferences.setStringList(
+    "meters",
+    meterInfos.value.map((meter) => meter.balance.meterNo).toList(),
+  );
 }
 
 class AppSettings {
@@ -156,37 +152,28 @@ class AppSettings {
 final appSettings = AppSettings();
 
 class AppInstance {
-  SharedPreferences sharedPreferences;
-  AppInstance({required this.sharedPreferences});
+  AppInstance();
 
-  static void get(void Function(AppInstance) fn) {
-    _appInstance.then(fn, onError: (_) => {});
-  }
+  static final AppInstance store = AppInstance();
 
-  static void init() {
-    Future<AppInstance> initInstance() async {
-      final sharedPreferences = await SharedPreferences.getInstance();
+  final SharedPreferencesAsync sharedPreferences = SharedPreferencesAsync();
 
-      final meters = sharedPreferences.getStringList("meters") ?? [];
+  void init() async {
+    final meters = await sharedPreferences.getStringList("meters") ?? [];
 
-      final getBalances = meters
-          .map(MeterNo.from)
-          .whereType<MeterNo>()
-          .map((meterNo) => _loadData(() => getBalance(meterNo)));
+    final getBalances = meters
+        .map(MeterNo.from)
+        .whereType<MeterNo>()
+        .map((meterNo) => _loadData(() => getBalance(meterNo)));
 
-      final balances = await Future.wait(getBalances);
+    final balances = await Future.wait(getBalances);
 
-      final data = balances
-          .map((res) => res?.data)
-          .whereType<Balance>()
-          .map((b) => MeterInfo(balance: b, color: colorPicker.next()))
-          .toList();
+    final data = balances
+        .map((res) => res?.data)
+        .whereType<Balance>()
+        .map((b) => MeterInfo(balance: b, color: colorPicker.next()))
+        .toList();
 
-      meterInfos.set(data);
-
-      return AppInstance(sharedPreferences: sharedPreferences);
-    }
-
-    _appInstance = initInstance();
+    meterInfos.set(data);
   }
 }
