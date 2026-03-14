@@ -29,7 +29,8 @@ TableRow tableRow(String title, String value) {
 
 TableRow? optionalTableRow(String title, String? value) {
   if (value == null) return null;
-  if (value.trim().isEmpty) return null;
+  value = value.trim();
+  if (value.isEmpty) return null;
 
   return TableRow(
     children: [

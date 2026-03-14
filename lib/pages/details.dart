@@ -47,38 +47,49 @@ class MeterDetailsPage extends StatelessWidget {
               tableRow("Reading Time", meter.formattedDate),
             ],
           ),
-          FutureBuilder(
-            future: meter.info,
-            builder: (_, snapshot) => snapshot.data.mapWidget(
-              (_, data) => Column(
-                children: [
-                  const TableHeader(header: "Consumer Information"),
-                  DataTableWidget(
-                    children: [
-                      ?optionalTableRow("Name", data.customerName),
-                      ?optionalTableRow("Contact", data.contactNo),
-                      ?optionalTableRow("Load", data.sanctionLoad?.toString()),
-                      ?optionalTableRow("Feeder", data.feederName),
-                      ?optionalTableRow(
-                        "Installation Address",
-                        data.installationAddress,
-                      ),
-                      ?optionalTableRow("S & D", data.sdName),
-                      ?optionalTableRow(
-                        "Installation Date",
-                        data.installationDate?.format(),
-                      ),
-                      ?optionalTableRow("Meter Model", data.meterModel),
-                      ?optionalTableRow("Phase Type", data.phaseType),
-                      ?optionalTableRow("Tariff", data.tariffSolution),
-                      ?optionalTableRow("Transformer", data.transformer),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
+          ConsumerInfoWidget(meter: meter),
         ],
+      ),
+    );
+  }
+}
+
+class ConsumerInfoWidget extends StatelessWidget {
+  const ConsumerInfoWidget({super.key, required this.meter});
+
+  final MeterInfo meter;
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: meter.info.getOrShowSnackBarErr(context),
+      builder: (_, snapshot) => snapshot.data.mapWidget(
+        (_, data) => Column(
+          children: [
+            const TableHeader(header: "Consumer Information"),
+            DataTableWidget(
+              children: [
+                ?optionalTableRow("Name", data.customerName),
+                ?optionalTableRow("Contact", data.contactNo),
+                ?optionalTableRow("Load", data.sanctionLoad?.toString()),
+                ?optionalTableRow("Feeder", data.feederName),
+                ?optionalTableRow(
+                  "Installation Address",
+                  data.installationAddress,
+                ),
+                ?optionalTableRow("S & D", data.sdName),
+                ?optionalTableRow(
+                  "Installation Date",
+                  data.installationDate?.format(),
+                ),
+                ?optionalTableRow("Meter Model", data.meterModel),
+                ?optionalTableRow("Phase Type", data.phaseType),
+                ?optionalTableRow("Tariff", data.tariffSolution),
+                ?optionalTableRow("Transformer", data.transformer),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

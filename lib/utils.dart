@@ -1,3 +1,6 @@
+import 'package:desco_usage/components/error_snackbar.dart';
+import 'package:flutter/material.dart';
+
 class OnceInit {
   bool _called = false;
 
@@ -14,3 +17,20 @@ class OnceInit {
   }
 }
 
+class LazyFut<T> {
+  LazyFut({required this.init});
+
+  final Future<T> Function() init;
+  T? value;
+
+  Future<T> get() async {
+    if (value == null) {
+      value = await init();
+    }
+    return value!;
+  }
+
+  Future<T?> getOrShowSnackBarErr(BuildContext context) async {
+    return showSnackBarOnError(context, get);
+  }
+}

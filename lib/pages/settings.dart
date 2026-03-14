@@ -1,8 +1,10 @@
-import 'package:desco_usage/app_state.dart';
+import 'package:desco_usage/signal.dart';
 import 'package:flutter/material.dart';
 
-class SettingsPage extends StatelessWidget {
-  const SettingsPage({super.key});
+class Settings extends StatelessWidget {
+  const Settings({super.key});
+
+  static final theme = CreateState(ThemeMode.light);
 
   @override
   Widget build(BuildContext context) {
@@ -10,14 +12,14 @@ class SettingsPage extends StatelessWidget {
       appBar: AppBar(title: const Text("Settings")),
       body: ListView(
         children: [
-          appSettings.theme.watch(
+          theme.watch(
             (_) => SwitchListTile(
               title: const Text("Dark Mode"),
               subtitle: const Text("Use dark theme"),
               secondary: const Icon(Icons.dark_mode),
-              value: appSettings.theme.value == .dark,
+              value: theme.value == .dark,
               onChanged: (value) {
-                appSettings.theme.set(value ? .dark : .light);
+                theme.set(value ? .dark : .light);
               },
             ),
           ),

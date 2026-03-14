@@ -1,4 +1,5 @@
 import 'package:desco_usage/cache.dart';
+import 'package:desco_usage/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -36,10 +37,8 @@ class MeterInfo {
   final String formattedDate;
   final CacheKey cacheKey;
 
-  late final info = customerInfo();
-
-  Future<Info> customerInfo() {
-    return CacheManager.getOrInit(
+  late final info = LazyFut(
+    init: () => CacheManager.getOrInit(
       cacheKey.customarInfoCKey(),
       Info.fromJson,
       () async {
@@ -48,8 +47,8 @@ class MeterInfo {
         );
         return res.getData();
       },
-    );
-  }
+    ),
+  );
 
   MeterNo meterNo() => MeterNo.fromMeterNo(balance.meterNo);
 }
@@ -148,7 +147,6 @@ void _saveMeters() {
 }
 
 class AppSettings {
-  final theme = CreateState(ThemeMode.light);
 }
 
 final appSettings = AppSettings();

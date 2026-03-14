@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:desco_usage/pages/settings.dart';
 import 'package:flutter/material.dart';
 
 import 'app_state.dart';
@@ -25,9 +26,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return appSettings.theme.watch(
+    return Settings.theme.watch(
       (_) => MaterialApp(
-        themeMode: appSettings.theme.value,
+        themeMode: Settings.theme.value,
         theme: .light(),
         darkTheme: .dark(),
         title: 'Desco Usage',

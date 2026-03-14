@@ -43,7 +43,7 @@ AppBar appBar(String title) => AppBar(
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (_) => const SettingsPage()),
+              MaterialPageRoute(builder: (_) => const Settings()),
             );
           },
         ),
