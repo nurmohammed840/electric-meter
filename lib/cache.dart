@@ -9,6 +9,7 @@ class CacheKey {
   final String meterNo;
 
   String customarInfoCKey() => "_CI_$meterNo";
+  String dailyConsumptionsCKey() => "_DC_$meterNo";
 }
 
 class CacheManager {

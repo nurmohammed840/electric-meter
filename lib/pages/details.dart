@@ -1,10 +1,12 @@
-import 'package:desco_usage/app_state.dart';
-import 'package:desco_usage/colors.dart';
-import 'package:desco_usage/components/optional.dart';
-import 'package:desco_usage/pages/settings.dart';
-import 'package:desco_usage/widgets/loading_indicator.dart';
-import 'package:desco_usage/widgets/table_data.dart';
 import 'package:flutter/material.dart';
+
+import '/app_state.dart';
+import '/colors.dart';
+import '/components/optional.dart';
+import '/widgets/daily_consumption_line_chart.dart';
+import '/pages/settings.dart';
+import '/widgets/loading_indicator.dart';
+import '/widgets/table_data.dart';
 
 class MeterDetailsPage extends StatelessWidget {
   const MeterDetailsPage({super.key, required this.meter});
@@ -49,6 +51,8 @@ class MeterDetailsPage extends StatelessWidget {
             ],
           ),
           if (Settings.showConsumerInfo.value) ConsumerInfoWidget(meter: meter),
+
+          DailyConsumptionWidget(meter: meter),
         ],
       ),
     );
@@ -61,37 +65,35 @@ class ConsumerInfoWidget extends StatelessWidget {
   final MeterInfo meter;
 
   @override
-  Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: meter.info.getOrShowSnackBarErr(context),
-      builder: (_, snapshot) => snapshot.data.mapWidget(
-        (_, data) => Column(
-          children: [
-            const TableHeader(header: "Consumer Information"),
-            DataTableWidget(
-              children: [
-                ?optionalTableRow("Name", data.customerName),
-                ?optionalTableRow("Contact", data.contactNo),
-                ?optionalTableRow("Load", data.sanctionLoad?.toString()),
-                ?optionalTableRow("Feeder", data.feederName),
-                ?optionalTableRow(
-                  "Installation Address",
-                  data.installationAddress,
-                ),
-                ?optionalTableRow("S & D", data.sdName),
-                ?optionalTableRow(
-                  "Installation Date",
-                  data.installationDate?.format(),
-                ),
-                ?optionalTableRow("Meter Model", data.meterModel),
-                ?optionalTableRow("Phase Type", data.phaseType),
-                ?optionalTableRow("Tariff", data.tariffSolution),
-                ?optionalTableRow("Transformer", data.transformer),
-              ],
-            ),
-          ],
-        ),
+  Widget build(BuildContext context) => FutureBuilder(
+    future: meter.info.getOrShowSnackBarErr(context),
+    builder: (_, snapshot) => snapshot.data.mapWidget(
+      (_, data) => Column(
+        children: [
+          const TableHeader(header: "Consumer Information"),
+          DataTableWidget(
+            children: [
+              ?optionalTableRow("Name", data.customerName),
+              ?optionalTableRow("Contact", data.contactNo),
+              ?optionalTableRow("Load", data.sanctionLoad?.toString()),
+              ?optionalTableRow("Feeder", data.feederName),
+              ?optionalTableRow(
+                "Installation Address",
+                data.installationAddress,
+              ),
+              ?optionalTableRow("S & D", data.sdName),
+              ?optionalTableRow(
+                "Installation Date",
+                data.installationDate?.format(),
+              ),
+              ?optionalTableRow("Meter Model", data.meterModel),
+              ?optionalTableRow("Phase Type", data.phaseType),
+              ?optionalTableRow("Tariff", data.tariffSolution),
+              ?optionalTableRow("Transformer", data.transformer),
+            ],
+          ),
+        ],
       ),
-    );
-  }
+    ),
+  );
 }

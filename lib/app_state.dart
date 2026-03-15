@@ -50,6 +50,18 @@ class MeterInfo {
     ),
   );
 
+  late final dailyConsumptions = LazyFut(
+    init: () async {
+      final today = Date.now();
+      final from = Date.from(today.time().subtract(const Duration(days: 120)));
+
+      final res = await getDailyConsumptions(meterNo(), from, today);
+      final dailyConsumptions = res.getData();
+
+      return dailyConsumptions;
+    },
+  );
+
   MeterNo meterNo() => MeterNo.fromMeterNo(balance.meterNo);
 }
 
@@ -146,8 +158,7 @@ void _saveMeters() {
   );
 }
 
-class AppSettings {
-}
+class AppSettings {}
 
 final appSettings = AppSettings();
 
