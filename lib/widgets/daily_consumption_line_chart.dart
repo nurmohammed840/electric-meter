@@ -4,6 +4,7 @@ import 'package:desco_usage/api/customer.dart';
 import 'package:desco_usage/api/date.dart';
 import 'package:desco_usage/app_state.dart';
 import 'package:desco_usage/components/optional.dart';
+import 'package:desco_usage/format.dart';
 import 'package:desco_usage/pages/settings.dart';
 import 'package:desco_usage/signal.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -66,7 +67,7 @@ class DailyConsumptionWidget extends StatelessWidget {
             Padding(
               padding: const .only(right: 16, top: 16, bottom: 16),
               child: SizedBox(
-                height: 200,
+                height: 250,
                 child: selected.watch(
                   (_) =>
                       DailyConsumptionLineChart(month: months[selected.value]),
@@ -176,32 +177,34 @@ class DailyConsumptionLineChart extends StatelessWidget {
 
         lineTouchData: LineTouchData(
           touchTooltipData: LineTouchTooltipData(
+            fitInsideHorizontally: true,
             getTooltipColor: (touchedSpot) =>
                 themeData.colorScheme.surfaceContainerHigh,
 
-            getTooltipItems: (spots) {
-              return [
-                for (final spot in spots)
-                  LineTooltipItem(
-                    spot.y.toStringAsFixed(2), // number on the dot
-                    TextStyle(
-                      color: spot.bar.color ?? Colors.blueGrey,
-                      fontWeight: .bold,
-                      fontSize: 14,
+            getTooltipItems: (spots) => spots.map((spot) {
+              final item = data[spot.spotIndex];
+              return LineTooltipItem(
+                spot.barIndex == 0
+                    ? spot.y.toStringAsFixed(2)
+                    : "${spot.y.round()} (${item.consumedTaka.round()})",
+
+                TextStyle(
+                  color: spot.bar.color,
+                  fontWeight: .bold,
+                  fontSize: 14,
+                ),
+                children: [
+                  if (spot.barIndex == 0)
+                    TextSpan(
+                      text: "\n${dateFormatterAlt.format(item.date.time())}",
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: themeData.colorScheme.onSurface,
+                      ),
                     ),
-                    children: [
-                      if (spot.barIndex == 0)
-                        TextSpan(
-                          text: "\n${data[spot.spotIndex].date.day}",
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: themeData.colorScheme.onSurface,
-                          ),
-                        ),
-                    ],
-                  ),
-              ];
-            },
+                ],
+              );
+            }).toList(),
           ),
         ),
 

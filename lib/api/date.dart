@@ -1,6 +1,4 @@
-import 'package:intl/intl.dart';
-
-final _dateFormatter = DateFormat('d MMMM yyyy');
+import 'package:desco_usage/format.dart';
 
 class Date {
   Date({required this.year, required this.month, required this.day});
@@ -23,7 +21,7 @@ class Date {
   }
 
   String format() {
-    return _dateFormatter.format(time());
+    return dateFormatterDefault.format(time());
   }
 }
 

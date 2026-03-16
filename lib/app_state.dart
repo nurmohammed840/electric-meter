@@ -1,7 +1,7 @@
 import 'package:desco_usage/cache.dart';
+import 'package:desco_usage/format.dart';
 import 'package:desco_usage/utils.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '/components/error_snackbar.dart';
@@ -11,10 +11,6 @@ import '/api/api.dart';
 import '/api/customer.dart';
 import '/colors.dart';
 import '/signal.dart';
-
-final dateFormatter = DateFormat('d MMM yyyy, h:mm a');
-final dateFormatterAlt = DateFormat('MMMM d');
-final balanceFormatter = NumberFormat('#,##0.##');
 
 class MeterRechargeReceipt {
   MeterRechargeReceipt({required this.info, required this.history})
