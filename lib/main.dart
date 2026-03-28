@@ -52,20 +52,18 @@ class HomeWidget extends StatelessWidget {
   ];
 
   @override
-  Widget build(BuildContext context) {
-    return selectedNav.watch((_) {
-      if (selectedNav.value == 1) {
-        RechargeHistoryScreen.onFocus();
-      }
-      return Scaffold(
-        body: IndexedStack(index: selectedNav.value, children: screens),
-        bottomNavigationBar: NavigationBar(
-          labelBehavior: .alwaysHide,
-          selectedIndex: selectedNav.value,
-          onDestinationSelected: (idx) => selectedNav.set(idx),
-          destinations: destinations,
-        ),
-      );
-    });
-  }
+  Widget build(BuildContext context) => selectedNav.watch((_) {
+    if (selectedNav.value == 1) {
+      RechargeHistoryScreen.onFocus();
+    }
+    return Scaffold(
+      body: IndexedStack(index: selectedNav.value, children: screens),
+      bottomNavigationBar: NavigationBar(
+        labelBehavior: .alwaysHide,
+        selectedIndex: selectedNav.value,
+        onDestinationSelected: (idx) => selectedNav.set(idx),
+        destinations: destinations,
+      ),
+    );
+  });
 }

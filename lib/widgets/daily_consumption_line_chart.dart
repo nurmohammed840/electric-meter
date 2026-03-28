@@ -49,7 +49,11 @@ class DailyConsumptionWidget extends StatelessWidget {
 
             selected.watch(
               (_) => Optional(
-                condition: (months.length - 1) == selected.value,
+                condition:
+                    (months.length - 1) == selected.value &&
+                    months[selected.value].tariffCategory ==
+                        TariffCategory.lowTensionA,
+
                 builder: (_) => Column(
                   children: [
                     const HeaderTitle(title: "Pradiction"),
@@ -78,15 +82,10 @@ class HeaderTitle extends StatelessWidget {
   final String title;
 
   @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const .all(8.0),
-      child: Text(
-        title,
-        style: const TextStyle(fontSize: 20, fontWeight: .bold),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => Padding(
+    padding: const .all(8.0),
+    child: Text(title, style: const TextStyle(fontSize: 20, fontWeight: .bold)),
+  );
 }
 
 class SizedGraph extends StatelessWidget {
@@ -95,16 +94,13 @@ class SizedGraph extends StatelessWidget {
   final Widget? Function(BuildContext, BoxConstraints) builder;
 
   @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const .only(right: 16, top: 16, bottom: 16),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          return SizedBox(height: 250, child: builder(context, constraints));
-        },
-      ),
-    );
-  }
+  Widget build(BuildContext context) => Padding(
+    padding: const .only(right: 16, top: 16, bottom: 16),
+    child: LayoutBuilder(
+      builder: (context, constraints) =>
+          SizedBox(height: 250, child: builder(context, constraints)),
+    ),
+  );
 }
 
 class MonthChips extends StatelessWidget {
@@ -114,37 +110,44 @@ class MonthChips extends StatelessWidget {
   final List<MontlyDailyConsumptionData> months;
 
   @override
-  Widget build(BuildContext context) {
-    return Wrap(
-      spacing: 12,
-      runSpacing: 8,
-      children: [
-        for (int i = 0; i < months.length; i++)
-          ChoiceChip(
-            // visualDensity: .compact,
-            label: Text(getMonthName(months[i].month)),
-            selected: i == selected.value,
-            onSelected: (val) {
-              selected.set(i);
-            },
-          ),
-      ],
-    );
-  }
+  Widget build(BuildContext context) => Wrap(
+    spacing: 12,
+    runSpacing: 8,
+    children: [
+      for (int i = 0; i < months.length; i++)
+        ChoiceChip(
+          label: Text(getMonthName(months[i].month)),
+          selected: i == selected.value,
+          onSelected: (val) {
+            selected.set(i);
+          },
+        ),
+    ],
+  );
 }
 
-class DailyConsumptionLineChart extends StatelessWidget {
-  const DailyConsumptionLineChart({
+class PlotLineChart extends StatelessWidget {
+  const PlotLineChart({
     super.key,
     required this.month,
     required this.constraints,
+    required this.lineBarsData,
+    required this.lineTouchData,
+    this.maxY,
+    this.showExtraLinesData = true,
   });
 
   final MontlyDailyConsumptionData month;
   final BoxConstraints constraints;
 
+  final List<LineChartBarData> lineBarsData;
+  final LineTouchData lineTouchData;
+
+  final double? maxY;
+  final bool showExtraLinesData;
+
   @override
-  Widget build(context) {
+  Widget build(BuildContext context) {
     final data = month.data;
     final themeData = Theme.of(context);
 
@@ -153,93 +156,50 @@ class DailyConsumptionLineChart extends StatelessWidget {
       dataLength: data.length,
       labelWidth: 32,
     );
+
     final dayTitleInterval = computeTitleInterval(
       chartWidth: constraints.maxWidth,
       dataLength: data.length,
       labelWidth: 20,
     );
 
-    final lineChartData = LineChartData(
-      minY: 0,
-      maxY: Settings.showDailyTakaDiff.value
-          ? ceilMultipleOf(month.maxDailyConsumtionTakaDiff, 10)
-          : ceilMultipleOf(
-              math.max(
-                month.avgDailyConsumtionUnitDiff * 2,
-                month.maxDailyConsumtionUnitDiff,
-              ),
-              5,
-            ),
+    ExtraLinesData? extraLinesData;
 
-      lineBarsData: [
-        LineChartBarData(
-          spots: [
-            for (int i = 0; i < data.length; i++)
-              FlSpot(i.toDouble(), data[i].consumedUnitDiff),
-          ],
-          isCurved: true,
-          barWidth: 2,
-          color: Colors.blue,
-          dotData: const FlDotData(show: true),
-        ),
-
-        if (Settings.showDailyTakaDiff.value)
-          LineChartBarData(
-            spots: [
-              for (int i = 0; i < data.length; i++)
-                FlSpot(i.toDouble(), data[i].consumedTakaDiff),
-            ],
-            isCurved: true,
-            barWidth: 2,
-            color: Colors.red,
-            dotData: const FlDotData(show: true),
-          ),
-      ],
-
-      extraLinesData: ExtraLinesData(
+    if (showExtraLinesData) {
+      extraLinesData = ExtraLinesData(
         horizontalLines: [
           HorizontalLine(
             y: month.avgDailyConsumtionUnitDiff,
             color: themeData.colorScheme.onSurface,
             strokeWidth: 1,
-            dashArray: [5, 5],
-            label: HorizontalLineLabel(show: true, alignment: .topLeft),
+            dashArray: const [5, 5],
+            label: HorizontalLineLabel(
+              show: true,
+              alignment: Alignment.topLeft,
+            ),
           ),
         ],
-      ),
+      );
+    }
 
-      lineTouchData: LineTouchData(
-        touchTooltipData: LineTouchTooltipData(
-          fitInsideHorizontally: true,
-          getTooltipColor: (touchedSpot) =>
-              themeData.colorScheme.surfaceContainerHigh,
+    final lineChartData = LineChartData(
+      minX: 0,
+      maxY: maxY,
+      lineBarsData: lineBarsData,
+      extraLinesData: extraLinesData,
 
-          getTooltipItems: (spots) => spots.map((spot) {
-            final item = data[spot.spotIndex];
-            final unit = item.energyUnit()?.round();
+      borderData: FlBorderData(
+        border: Border(
+          top: Settings.showAmountLabels.value
+              ? const BorderSide(color: borderColor)
+              : BorderSide.none,
 
-            return LineTooltipItem(
-              spot.barIndex == 0
-                  ? unit != null
-                        ? "${spot.y.toStringAsFixed(2)} ($unit)"
-                        : spot.y.toStringAsFixed(2)
-                  : "${spot.y.round()} (${item.consumedTaka.round()})",
-
-              TextStyle(color: spot.bar.color, fontWeight: .bold, fontSize: 14),
-              children: [
-                if (spot.barIndex == 0)
-                  TextSpan(
-                    text: "\n${dateFormatterAlt.format(item.date)}",
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: themeData.colorScheme.onSurface,
-                    ),
-                  ),
-              ],
-            );
-          }).toList(),
+          left: const BorderSide(color: borderColor),
+          bottom: const BorderSide(color: borderColor),
         ),
       ),
+
+      lineTouchData: lineTouchData,
 
       titlesData: FlTitlesData(
         rightTitles: const AxisTitles(sideTitles: SideTitles()),
@@ -291,17 +251,6 @@ class DailyConsumptionLineChart extends StatelessWidget {
         ),
       ),
 
-      borderData: FlBorderData(
-        border: Border(
-          top: Settings.showAmountLabels.value
-              ? const BorderSide(color: borderColor)
-              : BorderSide.none,
-
-          left: const BorderSide(color: borderColor),
-          bottom: const BorderSide(color: borderColor),
-        ),
-      ),
-
       gridData: FlGridData(
         drawVerticalLine: Settings.showAmountLabels.value,
         verticalInterval: amountTitleInterval,
@@ -309,6 +258,93 @@ class DailyConsumptionLineChart extends StatelessWidget {
     );
 
     return LineChart(lineChartData);
+  }
+}
+
+class DailyConsumptionLineChart extends StatelessWidget {
+  const DailyConsumptionLineChart({
+    super.key,
+    required this.month,
+    required this.constraints,
+  });
+
+  final MontlyDailyConsumptionData month;
+  final BoxConstraints constraints;
+
+  @override
+  Widget build(context) {
+    final themeData = Theme.of(context);
+    return PlotLineChart(
+      month: month,
+      constraints: constraints,
+      maxY: Settings.showDailyTakaDiff.value
+          ? ceilMultipleOf(month.maxDailyConsumtionTakaDiff, 10)
+          : ceilMultipleOf(
+              math.max(
+                month.avgDailyConsumtionUnitDiff * 2,
+                month.maxDailyConsumtionUnitDiff,
+              ),
+              5,
+            ),
+
+      lineBarsData: [
+        LineChartBarData(
+          spots: [
+            for (int i = 0; i < month.data.length; i++)
+              FlSpot(i.toDouble(), month.data[i].consumedUnitDiff),
+          ],
+          isCurved: true,
+          barWidth: 2,
+          color: Colors.blue,
+          dotData: const FlDotData(show: true),
+        ),
+
+        if (Settings.showDailyTakaDiff.value)
+          LineChartBarData(
+            spots: [
+              for (int i = 0; i < month.data.length; i++)
+                FlSpot(i.toDouble(), month.data[i].consumedTakaDiff),
+            ],
+            isCurved: true,
+            barWidth: 2,
+            color: Colors.red,
+            dotData: const FlDotData(show: true),
+          ),
+      ],
+
+      lineTouchData: LineTouchData(
+        touchTooltipData: LineTouchTooltipData(
+          fitInsideHorizontally: true,
+          getTooltipColor: (touchedSpot) =>
+              themeData.colorScheme.surfaceContainerHigh,
+
+          getTooltipItems: (spots) => spots.map((spot) {
+            final item = month.data[spot.spotIndex];
+            final unit = item.energyUnit()?.round();
+
+            return LineTooltipItem(
+              spot.barIndex == 0
+                  ? unit != null
+                        ? "${spot.y.toStringAsFixed(2)} ($unit)"
+                        : spot.y.toStringAsFixed(2)
+                  : "${spot.y.round()} (${item.consumedTaka.round()})",
+
+              TextStyle(color: spot.bar.color, fontWeight: .bold, fontSize: 14),
+              children: [
+                if (spot.barIndex == 0)
+                  TextSpan(
+                    text: "\n${dateFormatterAlt.format(item.date)}",
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: themeData.colorScheme.onSurface,
+                    ),
+                  ),
+              ],
+            );
+          }).toList(),
+        ),
+      ),
+    );
   }
 }
 
@@ -324,45 +360,60 @@ class PradictionGraph extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final data = month.data;
-    final numOfRemainingDays = remainingDaysInMonth(data.last.date);
+    final monthData = month.data;
+    final lastDay = monthData.last;
+    final numOfRemainingDays = remainingDaysInMonth(lastDay.date);
+    final lastDayUnit = lastDay.energyUnit();
 
-    if (numOfRemainingDays == 0) {
+    if (numOfRemainingDays == 0 || lastDayUnit == null) {
       return const SizedBox.shrink();
     }
 
-    // final firstDayConsumedTaka = data.first.consumedTaka;
-    // final lastDayUnit = data.last.consumedUnit - data.first.consumedUnit;
+    final avgUnitDiff = month.avgDailyConsumtionUnitDiff;
+    var prevDayConsumedTaka = lastDay.consumedTaka;
 
-    // {
-    //   final energyCost = calculateEnergyCost(lastDayUnit, tariff.LA()).round();
-    //   print(
-    //     "lastDayUnit: $lastDayUnit; EnergyCost: $firstDayConsumedTaka + $energyCost = ${firstDayConsumedTaka + energyCost}",
-    //   );
-    // }
+    final upcomingData = List.generate(numOfRemainingDays, (idx) {
+      final consumedUnit = lastDayUnit + ((idx + 1) * avgUnitDiff);
+      final currentTaka = ResidentialTariff.instance.energyCost(consumedUnit);
+      final consumedTakaDiff = currentTaka - prevDayConsumedTaka;
 
-    const val = 5.0;
-    // final val = calculateEnergyCost(
-    //   lastDayUnit + month.avgDailyConsumtionUnitDiff,
-    //   tariff.ResidentialTariff(),
-    // );
+      prevDayConsumedTaka = currentTaka;
 
-    final lineChartData = LineChartData(
-      minY: 0,
+      return DailyConsumptionData(
+        date: lastDay.date.add(Duration(days: idx + 1)),
+        consumedTaka: currentTaka,
+        consumedUnit: consumedUnit,
+        consumedUnitDiff: avgUnitDiff,
+        consumedTakaDiff: consumedTakaDiff,
+        tariffCategory: TariffCategory.lowTensionA,
+      );
+    });
+
+    return PlotLineChart(
+      showExtraLinesData: false,
+      constraints: constraints,
+      month: MontlyDailyConsumptionData(
+        data: upcomingData,
+        month: month.month,
+        avgDailyConsumtionUnitDiff: 0,
+        maxDailyConsumtionUnitDiff: 0,
+        maxDailyConsumtionTakaDiff: 0,
+        tariffCategory: month.tariffCategory,
+      ),
       lineBarsData: [
         LineChartBarData(
           spots: [
-            for (int i = 0; i < numOfRemainingDays; i++)
-              FlSpot(i.toDouble(), val),
+            for (int i = 0; i < upcomingData.length; i++)
+              FlSpot(i.toDouble(), upcomingData[i].consumedTakaDiff),
           ],
           isCurved: true,
           barWidth: 2,
-          color: Colors.red,
+          color: Colors.blue,
           dotData: const FlDotData(show: true),
         ),
       ],
+      lineTouchData: const LineTouchData(),
     );
-    return LineChart(lineChartData);
   }
 }
 
@@ -452,6 +503,7 @@ class MontlyDailyConsumptionData {
     required this.avgDailyConsumtionUnitDiff,
     required this.maxDailyConsumtionUnitDiff,
     required this.maxDailyConsumtionTakaDiff,
+    required this.tariffCategory,
   });
 
   int month;
@@ -462,6 +514,8 @@ class MontlyDailyConsumptionData {
   double maxDailyConsumtionTakaDiff;
 
   List<DailyConsumptionData> data;
+
+  TariffCategory? tariffCategory;
 
   static List<MontlyDailyConsumptionData> from(List<DailyConsumption> data) {
     final List<MontlyDailyConsumptionData> array = [];
@@ -499,6 +553,7 @@ class MontlyDailyConsumptionData {
           avgDailyConsumtionUnitDiff: avgDailyConsumtion,
           data: data,
           month: dateOfMiddle.date.month,
+          tariffCategory: dateOfMiddle.tariffCategory,
         ),
       );
     }
