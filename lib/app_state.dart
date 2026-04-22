@@ -65,52 +65,29 @@ final selectedNav = CreateState(0);
 
 CreateState<List<MeterInfo>> meterInfos = CreateState([]);
 
-CreateState<Future<List<MeterRechargeReceipt>>> rechargeHistorys = CreateState(
-  Future.value([]),
-);
-
-void loadRechargeHistorys(Duration duration) async {
-  Future<List<MeterRechargeReceipt>> load() async {
-    try {
-      return await fetchRechargeHistorys(duration);
-    } catch (e) {
-      return [];
-    }
-  }
-
-  rechargeHistorys.set(load());
-}
-
 Future<List<MeterRechargeReceipt>> fetchRechargeHistorys(
-  Duration duration,
+  Date from,
+  Date to,
 ) async {
-  final today = Date.now();
-  final from = Date.from(today.time().subtract(duration));
-
   final responses = await Future.wait(
     meterInfos.value.map((info) async {
-      try {
-        final list = await getRechargeHistorys(info.meterNo(), from, today);
-        if (list.data == null) return null;
-
-        final result = list.data!
-            .map(
-              (history) => MeterRechargeReceipt(history: history, info: info),
-            )
-            .toList();
-
-        return result;
-      } catch (e) {
-        // print(e);
-        return null;
-      }
+      final list = await getRechargeHistorys(info.meterNo(), from, to);
+      return list.data
+          ?.map((history) => MeterRechargeReceipt(history: history, info: info))
+          .toList();
     }),
   );
 
-  return responses
+  final result = responses
       .whereType<List<MeterRechargeReceipt>>()
       .expand((e) => e)
       .toList();
+
+  result.sort(
+    (a, b) => b.history.rechargeDate.compareTo(a.history.rechargeDate),
+  );
+
+  return result;
 }
 
 void addMeter(MeterNo meterNo, BuildContext context) async {

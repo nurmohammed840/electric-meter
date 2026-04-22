@@ -51,8 +51,6 @@ class MeterDetailsPage extends StatelessWidget {
         children: [
           DataTableWidget(
             children: [
-              // tableRow("Account No", balance.accountNo),
-              // tableRow("Meter No", balance.meterNo),
               tableRow("Balance", "৳ ${balance.balance}"),
               tableRow(
                 "Consumption",

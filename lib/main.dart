@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
         themeMode: Settings.theme.value,
         theme: .light(),
         darkTheme: .dark(),
-        title: 'Desco Usage',
+        title: 'Electricity Usage',
         debugShowCheckedModeBanner: false,
         home: const HomeWidget(),
       ),

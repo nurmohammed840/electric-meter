@@ -1,47 +1,109 @@
 import 'package:desco_usage/pages/recharge_receipt.dart';
+import 'package:desco_usage/signal.dart';
 import 'package:desco_usage/utils.dart';
 import 'package:desco_usage/widgets/app_bar.dart';
 import 'package:flutter/material.dart';
 
+import '../api/date.dart';
+import '../components/center_widget.dart';
 import '/app_state.dart';
-
-final _once = OnceInit();
 
 class RechargeHistoryScreen extends StatelessWidget {
   const RechargeHistoryScreen({super.key});
 
+  static final _once = OnceInit();
+
+  static Date to = Date.now();
+  static Date from = Date.from(to.time().subtract(const Duration(days: 90)));
+
+  static CreateState<Future<List<MeterRechargeReceipt>>> state = CreateState(
+    Future.value([]),
+  );
+
+  static void loadRechargeHistorys(Date from, Date to) async {
+    Future<List<MeterRechargeReceipt>> load() async {
+      try {
+        return await fetchRechargeHistorys(from, to);
+      } catch (e) {
+        return [];
+      }
+    }
+
+    state.set(load());
+  }
+
   static void onFocus() {
-    loadRechargeHistorys(const Duration(days: 90));
     _once.callAsync(() async {
+      loadRechargeHistorys(from, to);
     });
   }
 
   @override
-  Widget build(BuildContext _) {
-    return Scaffold(
-      appBar: appBar("Recharge History"),
-      body: rechargeHistorys.watch(
-        (_) => FutureBuilder(
-          future: rechargeHistorys.value,
-          builder: (_, snapshot) {
-            if (snapshot.connectionState == .waiting) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            final data = snapshot.data!;
-            return ListView.separated(
-              itemCount: data.length,
-              separatorBuilder: (_, _) => const Padding(
-                padding: .symmetric(horizontal: 16.0),
-                child: Divider(color: Colors.grey, thickness: 0.5),
-              ),
-              itemBuilder: (_, index) =>
-                  RechargeHistoryTile(meterRechargeHistory: data[index]),
-            );
-          },
-        ),
+  Widget build(BuildContext context) => Scaffold(
+    appBar: appBar(
+      "Recharge History",
+      refrash: () {
+        loadRechargeHistorys(from, to);
+      },
+      actionButton: IconButton(
+        icon: const Icon(Icons.date_range),
+        tooltip: "Date range",
+        onPressed: () async {
+          final start = from.time();
+          final end = to.time();
+
+          final dateRange = await showDateRangePicker(
+            context: context,
+            firstDate: DateTime(2000),
+            lastDate: DateTime(2100),
+            initialDateRange: DateTimeRange(start: start, end: end),
+          );
+
+          if (dateRange == null) {
+            return;
+          }
+
+          if (dateRange.start == start && dateRange.end == end) {
+            return;
+          }
+
+          from = Date.from(dateRange.start);
+          to = Date.from(dateRange.end);
+
+          loadRechargeHistorys(from, to);
+        },
       ),
-    );
-  }
+    ),
+    body: state.watch(
+      (_) => FutureBuilder(
+        future: state.value,
+        builder: (_, snapshot) {
+          if (snapshot.connectionState == .waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          final data = snapshot.data!;
+          
+          if (data.isEmpty) {
+            return const CenterWidget(
+              iconData: Icons.receipt_long,
+              header: "No History",
+              msg: "",
+            );
+          }
+          return ListView.separated(
+            itemCount: data.length,
+            separatorBuilder: (_, _) => const Padding(
+              padding: .symmetric(horizontal: 16.0),
+              child: Divider(color: Colors.grey, thickness: 0.5),
+            ),
+            itemBuilder: (_, index) =>
+                RechargeHistoryTile(meterRechargeHistory: data[index]),
+          );
+        },
+      ),
+    ),
+  );
 }
 
 class RechargeHistoryTile extends StatelessWidget {

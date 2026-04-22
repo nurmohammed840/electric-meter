@@ -11,17 +11,12 @@ class Date {
   int month;
   int day;
 
-  DateTime time() {
-    return DateTime(year, month, day);
-  }
+  DateTime time() => DateTime(year, month, day);
+  String format() => dateFormatterDefault.format(time());
 
   @override
   String toString() {
     return "${year.toString().padLeft(4, '0')}-${month.toString().padLeft(2, '0')}-${day.toString().padLeft(2, '0')}";
-  }
-
-  String format() {
-    return dateFormatterDefault.format(time());
   }
 }
 
