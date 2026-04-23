@@ -19,6 +19,19 @@ AppBar appBar(String title, {Widget? actionButton, void Function()? refrash}) =>
           ),
           onSelected: (value) {},
           itemBuilder: (context) => [
+            if (refrash != null)
+              PopupMenuItem(
+                value: 'refresh',
+                onTap: refrash,
+                child: const Row(
+                  children: [
+                    Icon(Icons.refresh),
+                    SizedBox(width: 8),
+                    Text('Refresh'),
+                  ],
+                ),
+              ),
+
             PopupMenuItem(
               value: 'add_meter',
               onTap: () async {
@@ -37,19 +50,6 @@ AppBar appBar(String title, {Widget? actionButton, void Function()? refrash}) =>
                 ],
               ),
             ),
-
-            if (refrash != null)
-              PopupMenuItem(
-                value: 'refresh',
-                onTap: refrash,
-                child: const Row(
-                  children: [
-                    Icon(Icons.refresh),
-                    SizedBox(width: 8),
-                    Text('Refresh'),
-                  ],
-                ),
-              ),
 
             PopupMenuItem(
               value: 'settings',

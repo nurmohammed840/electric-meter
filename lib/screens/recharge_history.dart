@@ -1,12 +1,14 @@
-import 'package:desco_usage/pages/recharge_receipt.dart';
-import 'package:desco_usage/signal.dart';
-import 'package:desco_usage/utils.dart';
-import 'package:desco_usage/widgets/app_bar.dart';
 import 'package:flutter/material.dart';
+
+import '/components/error_snackbar.dart';
+import '/pages/recharge_receipt.dart';
+import '/signal.dart';
+import '/utils.dart';
+import '/widgets/app_bar.dart';
+import '/app_state.dart';
 
 import '../api/date.dart';
 import '../components/center_widget.dart';
-import '/app_state.dart';
 
 class RechargeHistoryScreen extends StatelessWidget {
   const RechargeHistoryScreen({super.key});
@@ -20,21 +22,25 @@ class RechargeHistoryScreen extends StatelessWidget {
     Future.value([]),
   );
 
-  static void loadRechargeHistorys(Date from, Date to) async {
+  static void loadRechargeHistorys(
+    BuildContext context,
+    Date from,
+    Date to,
+  ) async {
     Future<List<MeterRechargeReceipt>> load() async {
-      try {
-        return await fetchRechargeHistorys(from, to);
-      } catch (e) {
-        return [];
-      }
+      final list = await showSnackBarOnError(
+        context,
+        () => fetchRechargeHistorys(from, to),
+      );
+      return list ?? [];
     }
 
     state.set(load());
   }
 
-  static void onFocus() {
+  static void onFocus(BuildContext context) {
     _once.callAsync(() async {
-      loadRechargeHistorys(from, to);
+      loadRechargeHistorys(context, from, to);
     });
   }
 
@@ -43,7 +49,7 @@ class RechargeHistoryScreen extends StatelessWidget {
     appBar: appBar(
       "Recharge History",
       refrash: () {
-        loadRechargeHistorys(from, to);
+        loadRechargeHistorys(context, from, to);
       },
       actionButton: IconButton(
         icon: const Icon(Icons.date_range),
@@ -70,7 +76,8 @@ class RechargeHistoryScreen extends StatelessWidget {
           from = Date.from(dateRange.start);
           to = Date.from(dateRange.end);
 
-          loadRechargeHistorys(from, to);
+          // if (context.mounted) loadRechargeHistorys(context, from, to);
+          if (context.mounted) loadRechargeHistorys(context, from, to);
         },
       ),
     ),
@@ -83,7 +90,7 @@ class RechargeHistoryScreen extends StatelessWidget {
           }
 
           final data = snapshot.data!;
-          
+
           if (data.isEmpty) {
             return const CenterWidget(
               iconData: Icons.receipt_long,
