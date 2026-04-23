@@ -16,7 +16,7 @@ class MyHttpOverrides extends HttpOverrides {
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  AppInstance.store.init();
+  AppInstance.store.loadAppData();
   HttpOverrides.global = MyHttpOverrides();
   runApp(const MyApp());
 }

@@ -22,9 +22,13 @@ Future<T?> showSnackBarOnError<T>(
 }
 
 void showErrorSnackBar(BuildContext context, Object error) {
-  showSnackBar(context, switch (error) {
-    SocketException() => const Text("No internet connection"),
-    TimeoutException() => const Text("Connection timeout"),
-    _ => Text(error.toString()),
-  });
+  showSnackBar(context, Text(errorMsg(error)));
+}
+
+String errorMsg(Object error) {
+  return switch (error) {
+    SocketException() => "No internet connection",
+    TimeoutException() => "Connection timeout",
+    _ => error.toString(),
+  };
 }

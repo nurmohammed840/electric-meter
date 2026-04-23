@@ -1,7 +1,9 @@
-import 'package:desco_usage/components/optional.dart';
-import 'package:desco_usage/widgets/app_bar.dart';
 import 'package:flutter/material.dart';
 
+import '/components/error_snackbar.dart';
+import '/signal.dart';
+import '/widgets/app_bar.dart';
+import '/components/optional.dart';
 import '/app_state.dart';
 import '/pages/details.dart';
 import '/components/balance_pie_chart.dart';
@@ -10,12 +12,33 @@ import '/components/center_widget.dart';
 class UsageScreen extends StatelessWidget {
   const UsageScreen({super.key});
 
+  static CreateState<Object?> error = CreateState(null);
+  static Listenable usageEvent = Listenable.merge([error, meterInfos]);
+
   @override
-  Widget build(BuildContext _) {
-    return Scaffold(
-      appBar: appBar("Usage"),
-      body: meterInfos.watch((_) {
+  Widget build(BuildContext _) => Scaffold(
+    appBar: appBar("Usage"),
+    body: Watch(
+      signal: usageEvent,
+      builder: (_) {
         if (meterInfos.value.isEmpty) {
+          if (error.value != null) {
+            return CenterWidget(
+              iconData: Icons.wifi_off_rounded,
+              header: "Connection Error",
+              msg: errorMsg(error.value!),
+              child: [
+                TextButton.icon(
+                  onPressed: () {
+                    AppInstance.store.loadAppData();
+                  },
+                  icon: const Icon(Icons.refresh),
+                  label: const Text("Refresh"),
+                ),
+              ],
+            );
+          }
+
           return const CenterWidget(
             iconData: Icons.electric_meter_outlined,
             header: "No Meter Found",
@@ -43,9 +66,9 @@ class UsageScreen extends StatelessWidget {
             return MeterList(meter: meterInfos.value[index - 1]);
           },
         );
-      }),
-    );
-  }
+      },
+    ),
+  );
 }
 
 class MeterList extends StatelessWidget {
@@ -54,37 +77,32 @@ class MeterList extends StatelessWidget {
   final MeterInfo meter;
 
   @override
-  Widget build(BuildContext context) {
-    final balance = meter.balance;
-    return ListTile(
-      leading: const Icon(Icons.electric_meter),
-      iconColor: meter.color,
-      title: Text(
-        balance.accountNo,
-        style: const TextStyle(
-          fontWeight: .w500, // make title bold
-        ),
+  Widget build(BuildContext context) => ListTile(
+    leading: const Icon(Icons.electric_meter),
+    iconColor: meter.color,
+    title: Text(
+      meter.balance.accountNo,
+      style: const TextStyle(
+        fontWeight: .w500, // make title bold
       ),
-      subtitle: Column(
-        crossAxisAlignment: .start,
-        children: [
-          Text("# ${balance.meterNo}"),
-          Text("${balance.currentMonthConsumption.round()} kWh"),
-          Text(meter.formattedDate),
-        ],
-      ),
-      trailing: Text(
-        balance.balance.toString(), // show balance on the right
-        style: const TextStyle(fontWeight: .bold, fontSize: 22),
-      ),
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => MeterDetailsPage(meter: meter),
-          ),
-        );
-      },
-    );
-  }
+    ),
+    subtitle: Column(
+      crossAxisAlignment: .start,
+      children: [
+        Text("# ${meter.balance.meterNo}"),
+        Text("${meter.balance.currentMonthConsumption.round()} kWh"),
+        Text(meter.formattedDate),
+      ],
+    ),
+    trailing: Text(
+      meter.balance.balance.toString(), // show balance on the right
+      style: const TextStyle(fontWeight: .bold, fontSize: 22),
+    ),
+    onTap: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => MeterDetailsPage(meter: meter)),
+      );
+    },
+  );
 }

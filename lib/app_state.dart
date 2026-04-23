@@ -1,5 +1,6 @@
 import 'package:desco_usage/cache.dart';
 import 'package:desco_usage/format.dart';
+import 'package:desco_usage/screens/usage.dart';
 import 'package:desco_usage/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -109,18 +110,14 @@ void addMeter(MeterNo meterNo, BuildContext context) async {
   }
 
   meterInfos.update((list) {
-    meterInfos.value.add(
-      MeterInfo(balance: balance.data!, color: colorPicker.next()),
-    );
+    list.add(MeterInfo(balance: balance.data!, color: colorPicker.next()));
   });
 
   _saveMeters();
 }
 
 void removeMeter(MeterInfo meter) {
-  meterInfos.update((list) {
-    list.remove(meter);
-  });
+  meterInfos.update((list) => list.remove(meter));
   _saveMeters();
 }
 
@@ -142,22 +139,28 @@ class AppInstance {
 
   final SharedPreferencesAsync sharedPreferences = SharedPreferencesAsync();
 
-  void init() async {
-    final meters = await sharedPreferences.getStringList("meters") ?? [];
+  void loadAppData() async {
+    try {
+      final meters = await sharedPreferences.getStringList("meters") ?? [];
 
-    final getBalances = meters
-        .map(MeterNo.from)
-        .whereType<MeterNo>()
-        .map((meterNo) => LoadingIndicator.show(() => getBalance(meterNo)));
+      final getBalances = meters
+          .map(MeterNo.from)
+          .whereType<MeterNo>()
+          .map((meterNo) => getBalance(meterNo));
 
-    final balances = await Future.wait(getBalances);
+      final balances = await LoadingIndicator.show(
+        () => Future.wait(getBalances),
+      );
 
-    final data = balances
-        .map((res) => res.data)
-        .whereType<Balance>()
-        .map((b) => MeterInfo(balance: b, color: colorPicker.next()))
-        .toList();
+      final data = balances
+          .map((res) => res.data)
+          .whereType<Balance>()
+          .map((b) => MeterInfo(balance: b, color: colorPicker.next()))
+          .toList();
 
-    meterInfos.set(data);
+      meterInfos.set(data);
+    } catch (err) {
+      UsageScreen.error.set(err);
+    }
   }
 }
