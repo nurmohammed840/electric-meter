@@ -60,6 +60,22 @@ class Settings extends StatelessWidget {
               onChanged: showAmountLabels.set,
             ),
           ),
+
+          const Divider(),
+
+          ListTile(
+            leading: const Icon(Icons.question_mark),
+            title: const Text("About"),
+            subtitle: const Text("App info, licenses & support"),
+            onTap: () {
+              showAboutDialog(
+                context: context,
+                applicationVersion: "1.0.0",
+                applicationLegalese:
+                    "nurmohammed840@gmail.com \n\nThis app is not affiliated with DESCO. It is developed independently to help users track their electricity consumption and balance.",
+              );
+            },
+          ),
         ],
       ),
     );

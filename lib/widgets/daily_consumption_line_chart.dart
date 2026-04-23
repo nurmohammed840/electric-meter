@@ -47,28 +47,28 @@ class DailyConsumptionWidget extends StatelessWidget {
               ),
             ),
 
-            selected.watch(
-              (_) => Optional(
-                condition:
-                    (months.length - 1) == selected.value &&
-                    months[selected.value].tariffCategory ==
-                        TariffCategory.lowTensionA,
+            // selected.watch(
+            //   (_) => Optional(
+            //     condition:
+            //         (months.length - 1) == selected.value &&
+            //         months[selected.value].tariffCategory ==
+            //             TariffCategory.lowTensionA,
 
-                builder: (_) => Column(
-                  children: [
-                    const HeaderTitle(title: "Pradiction"),
-                    SizedGraph(
-                      builder: (_, constraints) => selected.watch(
-                        (_) => PradictionGraph(
-                          month: months[selected.value],
-                          constraints: constraints,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            //     builder: (_) => Column(
+            //       children: [
+            //         const HeaderTitle(title: "Pradiction"),
+            //         SizedGraph(
+            //           builder: (_, constraints) => selected.watch(
+            //             (_) => PradictionGraph(
+            //               month: months[selected.value],
+            //               constraints: constraints,
+            //             ),
+            //           ),
+            //         ),
+            //       ],
+            //     ),
+            //   ),
+            // ),
           ],
         );
       });
@@ -342,67 +342,67 @@ class DailyConsumptionLineChart extends StatelessWidget {
   }
 }
 
-class PradictionGraph extends StatelessWidget {
-  const PradictionGraph({
-    super.key,
-    required this.month,
-    required this.constraints,
-  });
+// class PradictionGraph extends StatelessWidget {
+//   const PradictionGraph({
+//     super.key,
+//     required this.month,
+//     required this.constraints,
+//   });
 
-  final MontlyDailyConsumptionData month;
-  final BoxConstraints constraints;
+//   final MontlyDailyConsumptionData month;
+//   final BoxConstraints constraints;
 
-  @override
-  Widget build(BuildContext context) {
-    final monthData = month.data;
-    final lastDay = monthData.last;
-    final numOfRemainingDays = remainingDaysInMonth(lastDay.date);
-    final lastDayUnit = lastDay.energyUnit();
+//   @override
+//   Widget build(BuildContext context) {
+//     final monthData = month.data;
+//     final lastDay = monthData.last;
+//     final numOfRemainingDays = remainingDaysInMonth(lastDay.date);
+//     final lastDayUnit = lastDay.energyUnit();
 
-    if (numOfRemainingDays == 0 || lastDayUnit == null) {
-      return const SizedBox.shrink();
-    }
+//     if (numOfRemainingDays == 0 || lastDayUnit == null) {
+//       return const SizedBox.shrink();
+//     }
 
-    var prevDayConsumedTaka = lastDay.consumedTaka;
+//     var prevDayConsumedTaka = lastDay.consumedTaka;
 
-    final upcomingData = List.generate(numOfRemainingDays, (idx) {
-      final consumedUnit =
-          lastDayUnit + ((idx + 1) * month.avgDailyConsumtionUnitDiff);
-      final currentTaka = ResidentialTariff.instance.energyCost(consumedUnit);
-      final consumedTakaDiff = currentTaka - prevDayConsumedTaka;
+//     final upcomingData = List.generate(numOfRemainingDays, (idx) {
+//       final consumedUnit =
+//           lastDayUnit + ((idx + 1) * month.avgDailyConsumtionUnitDiff);
+//       final currentTaka = ResidentialTariff.instance.energyCost(consumedUnit);
+//       final consumedTakaDiff = currentTaka - prevDayConsumedTaka;
 
-      prevDayConsumedTaka = currentTaka;
+//       prevDayConsumedTaka = currentTaka;
 
-      return DailyConsumptionData(
-        date: lastDay.date.add(Duration(days: idx + 1)),
-        consumedTaka: currentTaka,
-        consumedUnit: consumedUnit,
-        consumedUnitDiff: month.avgDailyConsumtionUnitDiff,
-        consumedTakaDiff: consumedTakaDiff,
-        tariffCategory: TariffCategory.lowTensionA,
-      );
-    });
+//       return DailyConsumptionData(
+//         date: lastDay.date.add(Duration(days: idx + 1)),
+//         consumedTaka: currentTaka,
+//         consumedUnit: consumedUnit,
+//         consumedUnitDiff: month.avgDailyConsumtionUnitDiff,
+//         consumedTakaDiff: consumedTakaDiff,
+//         tariffCategory: TariffCategory.lowTensionA,
+//       );
+//     });
 
-    return PlotLineChart(
-      data: upcomingData,
-      constraints: constraints,
-      maxY: ceilMultipleOf(month.maxDailyConsumtionTakaDiff, 10),
-      lineBarsData: [
-        LineChartBarData(
-          spots: [
-            for (int i = 0; i < upcomingData.length; i++)
-              FlSpot(i.toDouble(), upcomingData[i].consumedTakaDiff),
-          ],
-          isCurved: true,
-          barWidth: 2,
-          color: Colors.blue,
-          dotData: const FlDotData(show: true),
-        ),
-      ],
-      lineTouchData: const LineTouchData(),
-    );
-  }
-}
+//     return PlotLineChart(
+//       data: upcomingData,
+//       constraints: constraints,
+//       maxY: ceilMultipleOf(month.maxDailyConsumtionTakaDiff, 10),
+//       lineBarsData: [
+//         LineChartBarData(
+//           spots: [
+//             for (int i = 0; i < upcomingData.length; i++)
+//               FlSpot(i.toDouble(), upcomingData[i].consumedTakaDiff),
+//           ],
+//           isCurved: true,
+//           barWidth: 2,
+//           color: Colors.blue,
+//           dotData: const FlDotData(show: true),
+//         ),
+//       ],
+//       lineTouchData: const LineTouchData(),
+//     );
+//   }
+// }
 
 double computeTitleInterval({
   required double chartWidth,
