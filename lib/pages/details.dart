@@ -16,58 +16,54 @@ class MeterDetailsPage extends StatelessWidget {
   final MeterInfo meter;
 
   @override
-  Widget build(BuildContext context) {
-    final balance = meter.balance;
-
-    return Scaffold(
-      appBar: AppBar(
-        title: ListTile(
-          dense: true,
-          contentPadding: .zero,
-          visualDensity: .compact,
-          leading: const Icon(Icons.electric_meter),
-          iconColor: meter.color,
-          title: Text(
-            balance.accountNo,
-            style: const TextStyle(fontWeight: .bold),
-          ),
-          subtitle: Text(balance.meterNo),
+  Widget build(BuildContext context) => Scaffold(
+    appBar: AppBar(
+      title: ListTile(
+        dense: true,
+        contentPadding: .zero,
+        visualDensity: .compact,
+        leading: const Icon(Icons.electric_meter),
+        iconColor: meter.color,
+        title: Text(
+          meter.balance.accountNo,
+          style: const TextStyle(fontWeight: .bold),
         ),
-        actions: [
-          loadingIndicator,
-          IconButton(
-            icon: const Padding(
-              padding: .symmetric(horizontal: 10),
-              child: Icon(Icons.delete, color: Colors.grey),
+        subtitle: Text(meter.balance.meterNo),
+      ),
+      actions: [
+        loadingIndicator,
+        IconButton(
+          icon: const Padding(
+            padding: .symmetric(horizontal: 10),
+            child: Icon(Icons.delete, color: Colors.grey),
+          ),
+          tooltip: "Remove Meter",
+          onPressed: () {
+            removeMeter(meter);
+            colorPicker.add(meter.color);
+            Navigator.pop(context);
+          },
+        ),
+      ],
+    ),
+    body: ListView(
+      children: [
+        DataTableWidget(
+          children: [
+            tableRow("Balance", "৳ ${meter.balance.balance}"),
+            tableRow(
+              "Consumption",
+              "${meter.balance.currentMonthConsumption.round()} kWh",
             ),
-            tooltip: "Remove Meter",
-            onPressed: () {
-              removeMeter(meter);
-              colorPicker.add(meter.color);
-              Navigator.pop(context);
-            },
-          ),
-        ],
-      ),
-      body: ListView(
-        children: [
-          DataTableWidget(
-            children: [
-              tableRow("Balance", "৳ ${balance.balance}"),
-              tableRow(
-                "Consumption",
-                "${balance.currentMonthConsumption.round()} kWh",
-              ),
-              tableRow("Reading Time", meter.formattedDate),
-            ],
-          ),
-          if (Settings.showConsumerInfo.value) ConsumerInfoWidget(meter: meter),
+            tableRow("Reading Time", meter.formattedDate),
+          ],
+        ),
+        if (Settings.showConsumerInfo.value) ConsumerInfoWidget(meter: meter),
 
-          DailyConsumptionWidget(meter: meter),
-        ],
-      ),
-    );
-  }
+        DailyConsumptionWidget(meter: meter),
+      ],
+    ),
+  );
 }
 
 class ConsumerInfoWidget extends StatelessWidget {
