@@ -13,8 +13,8 @@
         "desco_usage.iml": true,
         "devtools_options.yaml": true,
         // -------------
-        "build": true,
-        "docs": true,
+        // "build": true,
+        // "docs": true,
         "android": true,
         "ios": true,
         "assets": true,
