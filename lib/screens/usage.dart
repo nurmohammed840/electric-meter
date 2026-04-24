@@ -37,9 +37,7 @@ class UsageScreen extends StatelessWidget {
                     label: const Text("Refresh"),
                     onPressed: loadingIndicator.isLoading()
                         ? null
-                        : () {
-                            AppInstance.store.loadAppData();
-                          },
+                        : AppInstance.store.loadAppData,
                   ),
                 ),
               ],

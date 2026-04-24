@@ -1,5 +1,12 @@
+import 'package:desco_usage/app_state.dart';
 import 'package:desco_usage/signal.dart';
 import 'package:flutter/material.dart';
+
+const applicationLegalese = """nurmohammed840@gmail.com
+
+This app is not affiliated with DESCO. It is developed independently to help users track their electricity consumption and balance.""";
+
+final _store = AppInstance.store.sharedPreferences;
 
 class Settings extends StatelessWidget {
   const Settings({super.key});
@@ -8,6 +15,21 @@ class Settings extends StatelessWidget {
   static final showConsumerInfo = CreateState(true);
   static final showDailyTakaDiff = CreateState(true);
   static final showAmountLabels = CreateState(true);
+
+  static void load() async {
+    theme.set(
+      (await _store.getBool("Settings.isDark")) == true ? .dark : .light,
+    );
+    showConsumerInfo.set(
+      (await _store.getBool("Settings.showConsumerInfo")) ?? true,
+    );
+    showDailyTakaDiff.set(
+      (await _store.getBool("Settings.showDailyTakaDiff")) ?? true,
+    );
+    showAmountLabels.set(
+      (await _store.getBool("Settings.showAmountLabels")) ?? true,
+    );
+  }
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -22,6 +44,7 @@ class Settings extends StatelessWidget {
             value: theme.value == .dark,
             onChanged: (value) {
               theme.set(value ? .dark : .light);
+              _store.setBool("Settings.isDark", value);
             },
           ),
         ),
@@ -31,7 +54,10 @@ class Settings extends StatelessWidget {
             subtitle: const Text("Enable to display consumer details"),
             secondary: const Icon(Icons.person),
             value: showConsumerInfo.value,
-            onChanged: showConsumerInfo.set,
+            onChanged: (value) {
+              showConsumerInfo.set(value);
+              _store.setBool("Settings.showConsumerInfo", value);
+            },
           ),
         ),
         showDailyTakaDiff.watch(
@@ -42,7 +68,10 @@ class Settings extends StatelessWidget {
             ),
             secondary: const Icon(Icons.trending_up),
             value: showDailyTakaDiff.value,
-            onChanged: showDailyTakaDiff.set,
+            onChanged: (value) {
+              showDailyTakaDiff.set(value);
+              _store.setBool("Settings.showDailyTakaDiff", value);
+            },
           ),
         ),
         showAmountLabels.watch(
@@ -56,7 +85,10 @@ class Settings extends StatelessWidget {
               style: TextStyle(fontSize: 26, fontWeight: .bold),
             ),
             value: showAmountLabels.value,
-            onChanged: showAmountLabels.set,
+            onChanged: (value) {
+              showAmountLabels.set(value);
+              _store.setBool("Settings.showAmountLabels", value);
+            },
           ),
         ),
 
@@ -70,8 +102,7 @@ class Settings extends StatelessWidget {
             showAboutDialog(
               context: context,
               applicationVersion: "1.0.0",
-              applicationLegalese:
-                  "nurmohammed840@gmail.com \n\nThis app is not affiliated with DESCO. It is developed independently to help users track their electricity consumption and balance.",
+              applicationLegalese: applicationLegalese,
             );
           },
         ),
