@@ -6,25 +6,29 @@ import '/signal.dart';
 class LoadingIndicator extends StatelessWidget {
   LoadingIndicator({super.key});
 
-  final isLoading = CreateState(0);
+  final state = CreateState(0);
 
   Future<T> show<T>(Future<T> Function() cb) async {
-    isLoading.value += 1;
+    state.value += 1;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      isLoading.notify();
+      state.notify();
     });
     try {
       return await cb();
     } finally {
-      isLoading.set(isLoading.value - 1);
+      state.set(state.value - 1);
     }
+  }
+
+  bool isLoading() {
+    return state.value > 0;
   }
 
   @override
   Widget build(BuildContext context) {
-    return isLoading.watch(
+    return state.watch(
       (_) => Optional(
-        condition: isLoading.value > 0,
+        condition: isLoading(),
         builder: (_) => const SizedBox(
           width: 20,
           height: 20,

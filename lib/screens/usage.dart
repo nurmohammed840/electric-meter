@@ -31,12 +31,16 @@ class UsageScreen extends StatelessWidget {
               header: "Connection Error",
               msg: errorMsg(error.value!),
               child: [
-                TextButton.icon(
-                  onPressed: () {
-                    AppInstance.store.loadAppData();
-                  },
-                  icon: const Icon(Icons.refresh),
-                  label: const Text("Refresh"),
+                loadingIndicator.state.watch(
+                  (_) => TextButton.icon(
+                    icon: const Icon(Icons.refresh),
+                    label: const Text("Refresh"),
+                    onPressed: loadingIndicator.isLoading()
+                        ? null
+                        : () {
+                            AppInstance.store.loadAppData();
+                          },
+                  ),
                 ),
               ],
             );
