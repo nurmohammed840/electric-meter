@@ -1,3 +1,4 @@
+import 'package:desco_usage/pages/settings.dart';
 import 'package:desco_usage/widgets/loading_indicator.dart';
 import 'package:flutter/material.dart';
 
@@ -99,9 +100,18 @@ class MeterList extends StatelessWidget {
         Text(meter.formattedDate),
       ],
     ),
-    trailing: Text(
-      meter.balance.balance.toString(), // show balance on the right
-      style: const TextStyle(fontWeight: .bold, fontSize: 22),
+    trailing: Settings.lowBalanceThreshold.watch(
+      (_) => Text(
+        meter.balance.balance.toString(), // show balance on the right
+        style: TextStyle(
+          fontWeight: .bold,
+          fontSize: 22,
+          color: _getBalanceColor(
+            meter.balance.balance,
+            Settings.lowBalanceThreshold.value,
+          ),
+        ),
+      ),
     ),
     onTap: () {
       Navigator.push(
@@ -110,4 +120,13 @@ class MeterList extends StatelessWidget {
       );
     },
   );
+}
+
+Color? _getBalanceColor(double balance, RangeValues threshold) {
+  if (balance <= threshold.start) {
+    return Colors.redAccent[700]; // Critical
+  } else if (balance <= threshold.end) {
+    return Colors.orange; // Warning zone
+  }
+  return null; // Safe
 }

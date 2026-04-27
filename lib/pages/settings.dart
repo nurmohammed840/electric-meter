@@ -15,6 +15,7 @@ class Settings extends StatelessWidget {
   static final showConsumerInfo = CreateState(true);
   static final showDailyTakaDiff = CreateState(true);
   static final showAmountLabels = CreateState(true);
+  static final lowBalanceThreshold = CreateState(const RangeValues(100, 250));
 
   static void load() async {
     theme.set(
@@ -29,6 +30,13 @@ class Settings extends StatelessWidget {
     showAmountLabels.set(
       (await _store.getBool("Settings.showAmountLabels")) ?? true,
     );
+
+    final lowStart = await _store.getDouble("Settings.lowBalance.start");
+    final lowEnd = await _store.getDouble("Settings.lowBalance.end");
+
+    if (lowStart != null && lowEnd != null) {
+      lowBalanceThreshold.set(RangeValues(lowStart, lowEnd));
+    }
   }
 
   @override
@@ -89,6 +97,37 @@ class Settings extends StatelessWidget {
               showAmountLabels.set(value);
               _store.setBool("Settings.showAmountLabels", value);
             },
+          ),
+        ),
+
+        ListTile(
+          leading: const Icon(Icons.payments),
+          title: const Text("Low Balance Alert"),
+          isThreeLine: true,
+          titleAlignment: .center,
+          subtitle: lowBalanceThreshold.watch(
+            (_) => Column(
+              crossAxisAlignment: .start,
+              children: [
+                Padding(
+                  padding: const .only(top: 4, bottom: 8),
+                  child: Text(
+                    'Low balance range (${lowBalanceThreshold.value.start.round()} - ${lowBalanceThreshold.value.end.round()})',
+                  ),
+                ),
+                RangeSlider(
+                  values: lowBalanceThreshold.value,
+                  min: 50,
+                  max: 1000,
+                  divisions: 19,
+                  onChanged: lowBalanceThreshold.set,
+                  onChangeEnd: (value) {
+                    _store.setDouble("Settings.lowBalance.start", value.start);
+                    _store.setDouble("Settings.lowBalance.end", value.end);
+                  },
+                ),
+              ],
+            ),
           ),
         ),
 
