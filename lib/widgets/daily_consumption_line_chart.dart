@@ -476,7 +476,7 @@ class DailyConsumptionData {
 
   double? energyUnit() {
     if (tariffCategory == TariffCategory.lowTensionA) {
-      return ResidentialTariff.instance.unitFromEnergyCost(consumedTaka);
+      return ResidentialTariff.unitFromEnergyCost(consumedTaka);
     }
     return null;
   }
