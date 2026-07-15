@@ -12,14 +12,14 @@ class SlabRate {
 
 class FixedRate {
   const FixedRate({
-    required this.peak,
     required this.offPeak,
+    required this.peak,
     this.superOffPeak,
   });
 
-  final double peak;
-  final double offPeak;
   final double? superOffPeak;
+  final double offPeak;
+  final double peak;
 }
 
 enum TariffCategory {
@@ -71,6 +71,5 @@ class CommercialTariff {
   final TariffCategory category = TariffCategory.lowTensionE;
 
   final double demandCharge = 90;
-
-  final FixedRate rates = const FixedRate(peak: 15.62, offPeak: 11.71);
+  final FixedRate rates = const FixedRate(offPeak: 13.82, peak: 18.43);
 }

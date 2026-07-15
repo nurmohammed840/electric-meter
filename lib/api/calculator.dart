@@ -13,11 +13,11 @@ class ResidentialTariff {
 
   final slabs = [
     SlabRate(start: 1, end: 75, price: 5.26),
-    SlabRate(start: 76, end: 200, price: 7.20),
-    SlabRate(start: 201, end: 300, price: 7.59),
-    SlabRate(start: 301, end: 400, price: 8.02),
-    SlabRate(start: 401, end: 600, price: 12.67),
-    SlabRate(start: 601, price: 14.61),
+    SlabRate(start: 76, end: 200, price: 8.50),
+    SlabRate(start: 201, end: 300, price: 9.10),
+    SlabRate(start: 301, end: 400, price: 9.62),
+    SlabRate(start: 401, end: 600, price: 15.01),
+    SlabRate(start: 601, price: 17.35),
   ];
 
   double unitFromEnergyCost(double cost) {
