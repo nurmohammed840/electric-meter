@@ -316,19 +316,19 @@ class RechargeReceipt {
         accountNo: json["accountNo"],
         meterNo: json["meterNo"],
         orderId: _removeLeadingZeros(json["orderID"]),
-        token: _formatToken(json["token"], 4),
-        sequence: json["sequence"],
+        token: _formatToken(json["tokenNo"], 4),
+        sequence: json["seqNo"],
         totalAmount: json["totalAmount"],
-        energyAmount: json["energyAmount"]?.toDouble(),
-        chargeAmount: json["chargeAmount"]?.toDouble(),
+        energyAmount: json["energyAmount"]?.toDouble() ?? 0.0,
+        chargeAmount: json["chargeAmount"]?.toDouble() ?? 0.0,
         rechargeDate: DateTime.parse(json["rechargeDate"]),
         rechargeOperator: json["rechargeOperator"],
-        rebate: json["rebate"]?.toDouble(),
+        rebate: json["rebate"]?.toDouble() ?? 0.0,
         chargeItems: List<ChargeItem>.from(
           json["chargeItems"].map((x) => ChargeItem.fromJson(x)),
         ),
         orderStatus: json["orderStatus"],
-        vat: json["VAT"]?.toDouble(),
+        vat: json["VAT"]?.toDouble() ?? 0.0,
       );
 
   String accountNo;
@@ -392,14 +392,23 @@ class ChargeItem {
 
 String _removeLeadingZeros(String s) => s.replaceFirst(RegExp(r'^0+'), '');
 
-String _formatToken(String input, int sp) {
+String _formatToken(String chars, int sp) {
   final buffer = StringBuffer();
+  int count = 0;
 
-  for (int i = 0; i < input.length; i++) {
-    if (i > 0 && i % sp == 0) {
+  for (final ch in chars.split('')) {
+    if (ch == ",") {
+      buffer.write(',\n');
+      count = 0;
+      continue;
+    }
+
+    if (count > 0 && count % sp == 0) {
       buffer.write('  ');
     }
-    buffer.write(input[i]);
+
+    buffer.write(ch);
+    count++;
   }
 
   return buffer.toString();

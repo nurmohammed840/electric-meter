@@ -16,6 +16,10 @@ Future<T?> showSnackBarOnError<T>(
   try {
     return await cb();
   } catch (error) {
+    // } catch (error, trace) {
+    // debugPrint('Error: $error');
+    // debugPrint('Stack trace: $trace');
+
     if (context.mounted) showErrorSnackBar(context, error);
   }
   return null;
