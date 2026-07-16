@@ -89,13 +89,13 @@ Future<Response<List<RechargeReceipt>>> getRechargeHistorys(
   return fetchJson(url, parseResponseMany(RechargeReceipt.fromJson));
 }
 
-Future<Response<List<MonthlyConsumption>>> getMonthlyConsumption(
-  MeterNo meterInfo,
-  Month from,
-  Month to,
-) async {
-  final url =
-      "$apiUrl/getCustomerMonthlyConsumption?$meterInfo&monthFrom=$from&monthTo=$to";
+// Future<Response<List<MonthlyConsumption>>> getMonthlyConsumption(
+//   MeterNo meterInfo,
+//   Month from,
+//   Month to,
+// ) async {
+//   final url =
+//       "$apiUrl/getCustomerMonthlyConsumption?$meterInfo&monthFrom=$from&monthTo=$to";
 
-  return fetchJson(url, parseResponseMany(MonthlyConsumption.fromJson));
-}
+//   return fetchJson(url, parseResponseMany(MonthlyConsumption.fromJson));
+// }

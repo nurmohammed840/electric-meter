@@ -142,8 +142,8 @@ class DailyConsumption {
   factory DailyConsumption.fromJson(Map<String, dynamic> json) =>
       DailyConsumption(
         accountNo: json["accountNo"],
-        consumedTaka: json["consumedTaka"]?.toDouble(),
-        consumedUnit: json["consumedUnit"]?.toDouble(),
+        consumedTaka: json["consumedTaka"]?.toDouble() ?? 0.0,
+        consumedUnit: json["consumedUnit"]?.toDouble() ?? 0.0,
         customerName: json["customerName"],
         importReactiveEnergyIncrement: json["importReactiveEnergyIncrement"],
         installationAddress: json["installationAddress"],
@@ -190,72 +190,6 @@ class DailyConsumption {
   }
 }
 
-class MonthlyConsumption {
-  MonthlyConsumption({
-    required this.accountNo,
-    required this.meterNo,
-    required this.consumedTaka,
-    required this.consumedUnit,
-    required this.customerName,
-    required this.installationAddress,
-    required this.phaseType,
-    required this.sanctionLoad,
-    required this.maximumDemand,
-    required this.tariffSolution,
-    required this.month,
-    required this.apf,
-  });
-
-  factory MonthlyConsumption.fromJson(Map<String, dynamic> json) =>
-      MonthlyConsumption(
-        accountNo: json["accountNo"],
-        meterNo: json["meterNo"],
-        consumedTaka: json["consumedTaka"]?.toDouble(),
-        consumedUnit: json["consumedUnit"]?.toDouble(),
-        customerName: json["customerName"],
-        installationAddress: json["installationAddress"],
-        phaseType: json["phaseType"],
-        sanctionLoad: json["sanctionLoad"],
-        maximumDemand: json["maximumDemand"]?.toDouble(),
-        tariffSolution: json["tariffSolution"],
-        month: json["month"],
-        apf: json["APF"],
-      );
-
-  String accountNo;
-  String meterNo;
-  double consumedTaka;
-  double consumedUnit;
-  String customerName;
-  String installationAddress;
-  String phaseType;
-  int sanctionLoad;
-  double maximumDemand;
-  String tariffSolution;
-  String month;
-  double apf;
-
-  Map<String, dynamic> toJson() => {
-    "accountNo": accountNo,
-    "meterNo": meterNo,
-    "consumedTaka": consumedTaka,
-    "consumedUnit": consumedUnit,
-    "customerName": customerName,
-    "installationAddress": installationAddress,
-    "phaseType": phaseType,
-    "sanctionLoad": sanctionLoad,
-    "maximumDemand": maximumDemand,
-    "tariffSolution": tariffSolution,
-    "month": month,
-    "APF": apf,
-  };
-
-  @override
-  String toString() {
-    return prettyPrint.convert(toJson());
-  }
-}
-
 class Balance {
   Balance({
     required this.accountNo,
@@ -268,8 +202,8 @@ class Balance {
   factory Balance.fromJson(Map<String, dynamic> json) => Balance(
     accountNo: json["accountNo"],
     meterNo: json["meterNo"],
-    balance: json["balance"]?.toDouble(),
-    currentMonthConsumption: json["currentMonthConsumption"]?.toDouble(),
+    balance: json["balance"]?.toDouble() ?? 0,
+    currentMonthConsumption: json["currentMonthConsumption"]?.toDouble() ?? 0,
     readingTime: Date.from(DateTime.parse(json["readingTime"])),
   );
 
@@ -315,19 +249,19 @@ class RechargeReceipt {
       RechargeReceipt(
         accountNo: json["accountNo"],
         meterNo: json["meterNo"],
-        orderId: _removeLeadingZeros(json["orderID"]),
-        token: _formatToken(json["tokenNo"], 4),
-        sequence: json["seqNo"],
-        totalAmount: json["totalAmount"],
+        orderId: _removeLeadingZeros(json["orderID"] ?? ""),
+        token: _formatToken(json["tokenNo"] ?? "", 4),
+        sequence: json["seqNo"] ?? "",
+        totalAmount: json["totalAmount"] ?? 0.0,
         energyAmount: json["energyAmount"]?.toDouble() ?? 0.0,
         chargeAmount: json["chargeAmount"]?.toDouble() ?? 0.0,
         rechargeDate: DateTime.parse(json["rechargeDate"]),
-        rechargeOperator: json["rechargeOperator"],
+        rechargeOperator: json["rechargeOperator"] ?? "",
         rebate: json["rebate"]?.toDouble() ?? 0.0,
         chargeItems: List<ChargeItem>.from(
           json["chargeItems"].map((x) => ChargeItem.fromJson(x)),
         ),
-        orderStatus: json["orderStatus"],
+        orderStatus: json["orderStatus"] ?? "",
         vat: json["VAT"]?.toDouble() ?? 0.0,
       );
 
@@ -373,8 +307,8 @@ class ChargeItem {
   ChargeItem({required this.chargeItemName, required this.chargeAmount});
 
   factory ChargeItem.fromJson(Map<String, dynamic> json) => ChargeItem(
-    chargeItemName: json["chargeItemName"],
-    chargeAmount: json["chargeAmount"],
+    chargeItemName: json["chargeItemName"] ?? "Other Charge",
+    chargeAmount: json["chargeAmount"] ?? 0.0,
   );
   String chargeItemName;
   double chargeAmount;
@@ -389,6 +323,72 @@ class ChargeItem {
     return prettyPrint.convert(toJson());
   }
 }
+
+// class MonthlyConsumption {
+//   MonthlyConsumption({
+//     required this.accountNo,
+//     required this.meterNo,
+//     required this.consumedTaka,
+//     required this.consumedUnit,
+//     required this.customerName,
+//     required this.installationAddress,
+//     required this.phaseType,
+//     required this.sanctionLoad,
+//     required this.maximumDemand,
+//     required this.tariffSolution,
+//     required this.month,
+//     required this.apf,
+//   });
+
+//   factory MonthlyConsumption.fromJson(Map<String, dynamic> json) =>
+//       MonthlyConsumption(
+//         accountNo: json["accountNo"],
+//         meterNo: json["meterNo"],
+//         consumedTaka: json["consumedTaka"]?.toDouble(),
+//         consumedUnit: json["consumedUnit"]?.toDouble(),
+//         customerName: json["customerName"],
+//         installationAddress: json["installationAddress"],
+//         phaseType: json["phaseType"],
+//         sanctionLoad: json["sanctionLoad"],
+//         maximumDemand: json["maximumDemand"]?.toDouble(),
+//         tariffSolution: json["tariffSolution"],
+//         month: json["month"],
+//         apf: json["APF"],
+//       );
+
+//   String accountNo;
+//   String meterNo;
+//   double consumedTaka;
+//   double consumedUnit;
+//   String customerName;
+//   String installationAddress;
+//   String phaseType;
+//   int sanctionLoad;
+//   double maximumDemand;
+//   String tariffSolution;
+//   String month;
+//   double apf;
+
+//   Map<String, dynamic> toJson() => {
+//     "accountNo": accountNo,
+//     "meterNo": meterNo,
+//     "consumedTaka": consumedTaka,
+//     "consumedUnit": consumedUnit,
+//     "customerName": customerName,
+//     "installationAddress": installationAddress,
+//     "phaseType": phaseType,
+//     "sanctionLoad": sanctionLoad,
+//     "maximumDemand": maximumDemand,
+//     "tariffSolution": tariffSolution,
+//     "month": month,
+//     "APF": apf,
+//   };
+
+//   @override
+//   String toString() {
+//     return prettyPrint.convert(toJson());
+//   }
+// }
 
 String _removeLeadingZeros(String s) => s.replaceFirst(RegExp(r'^0+'), '');
 
