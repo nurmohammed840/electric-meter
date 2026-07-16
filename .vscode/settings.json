@@ -14,10 +14,10 @@
         "devtools_options.yaml": true,
         // -------------
         "build": true,
-        // "docs": true,
+        "docs": true,
         "android": true,
         "ios": true,
-        // "assets": true,
+        "assets": true,
         "linux": true,
         "macos": true,
         "web": true,
