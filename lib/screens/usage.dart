@@ -96,7 +96,8 @@ class MeterList extends StatelessWidget {
       crossAxisAlignment: .start,
       children: [
         Text("# ${meter.balance.meterNo}"),
-        Text("${meter.balance.currentMonthConsumption.round()} kWh"),
+        if (meter.balance.currentMonthConsumption != null)
+          Text("${meter.balance.currentMonthConsumption!.round()} kWh"),
         Text(meter.formattedDate),
       ],
     ),

@@ -51,10 +51,11 @@ class MeterDetailsPage extends StatelessWidget {
         DataTableWidget(
           children: [
             tableRow("Balance", "৳ ${meter.balance.balance}"),
-            tableRow(
-              "Consumption",
-              "${meter.balance.currentMonthConsumption.round()} kWh",
-            ),
+            if (meter.balance.currentMonthConsumption != null)
+              tableRow(
+                "Consumption",
+                "${meter.balance.currentMonthConsumption!.round()} kWh",
+              ),
             tableRow("Reading Time", meter.formattedDate),
           ],
         ),

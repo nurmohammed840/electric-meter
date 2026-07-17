@@ -195,22 +195,22 @@ class Balance {
     required this.accountNo,
     required this.meterNo,
     required this.balance,
-    required this.currentMonthConsumption,
     required this.readingTime,
+    this.currentMonthConsumption,
   });
 
   factory Balance.fromJson(Map<String, dynamic> json) => Balance(
     accountNo: json["accountNo"],
     meterNo: json["meterNo"],
     balance: json["balance"]?.toDouble() ?? 0,
-    currentMonthConsumption: json["currentMonthConsumption"]?.toDouble() ?? 0,
+    currentMonthConsumption: json["currentMonthConsumption"]?.toDouble(),
     readingTime: Date.from(DateTime.parse(json["readingTime"])),
   );
 
   String accountNo;
   String meterNo;
   double balance;
-  double currentMonthConsumption;
+  double? currentMonthConsumption;
   Date readingTime;
 
   Map<String, dynamic> toJson() => {
